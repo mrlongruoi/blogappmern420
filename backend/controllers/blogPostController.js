@@ -1,5 +1,6 @@
-const BlogPost = require("../models/BlogPost");
 const mongoose = require("mongoose");
+const cloudinary = require('cloudinary').v2;
+const BlogPost = require("../models/BlogPost");
 
 // @desc    Create a new blog post
 // @route   POST /api/posts
@@ -42,16 +43,30 @@ const updatePost = async (req, res) => {
     const post = await BlogPost.findById(req.params.id);
     if (!post) return res.status(404).json({ message: "Post not found" });
 
-    if (
-      post.author.toString() !== req.user._id.toString() &&
-      !req.user.isAdmin
-    ) {
-      return res
-        .status(403)
-        .json({ message: "Not authorized to update this post" });
+    // (Logic kiểm tra quyền sở hữu của bạn đã tốt, giữ nguyên)
+    if (post.author.toString() !== req.user._id.toString() && !req.user.isAdmin) {
+      return res.status(403).json({ message: "Not authorized to update this post" });
     }
 
     const updatedData = req.body;
+
+    // === LOGIC XỬ LÝ ẢNH MỚI ===
+    // Nếu có một coverImageUrl mới được gửi lên (có nghĩa là ảnh đã được thay đổi)
+    // và nó khác với URL cũ
+    if (updatedData.coverImageUrl && post.coverImageUrl !== updatedData.coverImageUrl) {
+        // Kiểm tra xem ảnh cũ có tồn tại không trước khi xóa
+        if (post.coverImageUrl) {
+            // Trích xuất public_id từ URL đầy đủ của ảnh cũ
+            // URL có dạng: .../upload/v12345/folder/filename.jpg
+            const oldPublicId = post.coverImageUrl.split('/upload/')[1].split('.')[0];
+            
+            // Xóa ảnh cũ khỏi Cloudinary
+            await cloudinary.uploader.destroy(oldPublicId);
+        }
+    }
+    // === KẾT THÚC LOGIC XỬ LÝ ẢNH ===
+
+    // Cập nhật slug nếu tiêu đề thay đổi
     if (updatedData.title) {
       updatedData.slug = updatedData.title
         .toLowerCase()
@@ -66,9 +81,8 @@ const updatePost = async (req, res) => {
     );
     res.json(updatedPost);
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Server Error", error: err.message });
+    console.error("Update Post Error:", err); // Log lỗi ra để dễ gỡ rối
+    res.status(500).json({ message: "Server Error", error: err.message });
   }
 };
 
@@ -79,13 +93,21 @@ const deletePost = async (req, res) => {
  try {
     const post = await BlogPost.findById(req.params.id);
     if (!post) return res.status(404).json({ message: "Post not found" });
+    
+    // (Thêm logic kiểm tra quyền sở hữu ở đây nếu cần)
 
-    await post.deleteOne();
-    res.json({ message: "Post deleted" });
+    // === LOGIC XÓA ẢNH TRÊN CLOUDINARY ===
+    if (post.coverImageUrl) {
+        const publicId = post.coverImageUrl.split('/upload/')[1].split('.')[0];
+        await cloudinary.uploader.destroy(publicId);
+    }
+    // === KẾT THÚC LOGIC XÓA ẢNH ===
+
+    await post.deleteOne(); // Xóa bài viết khỏi DB
+    res.json({ message: "Post deleted successfully" });
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Server Error", error: err.message });
+    console.error("Delete Post Error:", err);
+    res.status(500).json({ message: "Server Error", error: err.message });
   }
 };
 
