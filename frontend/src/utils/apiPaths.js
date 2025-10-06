@@ -1,5 +1,4 @@
 export const BASE_URL = "https://blogappmern420.vercel.app";
-
 export const API_PATHS = {
   AUTH: {
     REGISTER: "/api/auth/register", // Signup
