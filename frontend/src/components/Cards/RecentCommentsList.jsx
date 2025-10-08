@@ -1,12 +1,11 @@
-import React from 'react'
 import moment from "moment";
 import { LuDot } from "react-icons/lu";
 
-const RecentCommentsList = ({comments}) => {
+const RecentCommentsList = ({ comments }) => {
   return (
-     <div className="mt-4">
+    <div className="mt-4">
       <ul className="space-y-4">
-        {comments?.slice(0,10)?.map((comment) => (
+        {comments?.slice(0, 10)?.map((comment) => (
           <li
             key={comment._id}
             className="flex gap-4 border-b border-gray-100 pb-4 last:border-none"
@@ -31,9 +30,7 @@ const RecentCommentsList = ({comments}) => {
                     </span>
                   </div>
 
-                  <p className="text-sm text-black mt-0.5">
-                    {comment.content}
-                  </p>
+                  <p className="text-sm text-black mt-0.5">{comment.content}</p>
                 </div>
               </div>
               <div className="mt-2 flex items-center gap-3">
@@ -51,7 +48,7 @@ const RecentCommentsList = ({comments}) => {
         ))}
       </ul>
     </div>
-  )
-}
+  );
+};
 
-export default RecentCommentsList
+export default RecentCommentsList;

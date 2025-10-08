@@ -1,4 +1,3 @@
-import React from "react";
 import { LuEye, LuHeart, LuTrash2 } from "react-icons/lu";
 
 const BlogPostSummaryCard = ({
@@ -11,7 +10,8 @@ const BlogPostSummaryCard = ({
   onClick,
   onDelete,
 }) => {
-  return <div
+  return (
+    <div
       className="flex items-start gap-4 bg-white p-3 mb-5 rounded-lg cursor-pointer group"
       onClick={onClick}
     >
@@ -24,18 +24,18 @@ const BlogPostSummaryCard = ({
 
         <div className="flex items-center gap-2.5 mt-2 flex-wrap">
           <div className="text-[11px] text-gray-700 font-medium bg-gray-100 px-2.5 py-1 rounded">
-            Updated: {updatedOn}
+            Cập nhật: {updatedOn}
           </div>
 
           <div className="h-6 w-[1px] bg-gray-300/70" />
 
           <div className="flex items-center gap-2">
             <span className="flex items-center gap-1.5 text-xs text-sky-700 font-medium bg-sky-50 px-2.5 py-1 rounded">
-             <LuEye className="text-[16px] text-sky-500" /> {views} 
+              <LuEye className="text-[16px] text-sky-500" /> {views}
             </span>
 
             <span className="flex items-center gap-1.5 text-xs text-sky-700 font-medium bg-sky-50 px-2.5 py-1 rounded">
-              <LuHeart className="text-[16px] text-sky-500" /> {likes} 
+              <LuHeart className="text-[16px] text-sky-500" /> {likes}
             </span>
           </div>
 
@@ -61,9 +61,10 @@ const BlogPostSummaryCard = ({
           onDelete();
         }}
       >
-        <LuTrash2 /> <span className="hidden md:block">Delete</span>
+        <LuTrash2 /> <span className="hidden md:block">Xóa bỏ</span>
       </button>
     </div>
+  );
 };
 
 export default BlogPostSummaryCard;

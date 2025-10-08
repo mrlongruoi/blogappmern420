@@ -1,9 +1,10 @@
-import React from "react";
 import { LuHeart } from "react-icons/lu";
 
 const TopPostCard = ({ title, coverImageUrl, views, likes, maxViews }) => {
-    const viewPercentage = ((views / maxViews) * 100).toFixed(0);
-  return <div className="bg-white py-4 flex flex-col gap-3 border-b border-gray-100">
+  const viewPercentage = ((views / maxViews) * 100).toFixed(0);
+
+  return (
+    <div className="bg-white py-4 flex flex-col gap-3 border-b border-gray-100">
       <div className="flex items-start gap-2">
         <img
           src={coverImageUrl}
@@ -24,14 +25,15 @@ const TopPostCard = ({ title, coverImageUrl, views, likes, maxViews }) => {
 
       <div className="flex items-center justify-between text-xs text-gray-600">
         <span className="flex items-center gap-1 text-sm text-black">
-           {views} views
+          {views} lượt xem
         </span>
 
         <span className="flex items-center gap-1 text-sm text-black">
-          <LuHeart className="text-[16px] text-gray-500" /> {likes} likes
+          <LuHeart className="text-[16px] text-gray-500" /> {likes} lượt thích
         </span>
       </div>
     </div>
+  );
 };
 
 export default TopPostCard;

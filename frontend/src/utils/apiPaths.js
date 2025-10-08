@@ -1,4 +1,6 @@
-export const BASE_URL = "https://blogappmern420.vercel.app";
+// export const BASE_URL = "https://blogappmern420.vercel.app";
+export const BASE_URL = "http://localhost:8000";
+// export const BASE_URL = '';
 export const API_PATHS = {
   AUTH: {
     REGISTER: "/api/auth/register", // Signup

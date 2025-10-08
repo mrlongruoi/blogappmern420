@@ -36,10 +36,10 @@ axiosInstance.interceptors.response.use(
         // Redirect to login page
         // window.location.href = "/";
       } else if (error.response.status === 500) {
-        console.error("Server error. Please try again later.");
+        console.error("Lỗi máy chủ. Vui lòng thử lại sau.");
       }
     } else if (error.code === "ECONNABORTED") {
-      console.error("Request timeout. Please try again.");
+      console.error("Yêu cầu tạm dừng. Vui lòng thử lại.");
     }
     return Promise.reject(error);
   }

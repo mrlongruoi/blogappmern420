@@ -1,20 +1,18 @@
-import React, { useEffect, useState } from "react";
-import DashboardLayout from "../../components/layouts/DashboardLayout";
-
-import { LuGalleryVerticalEnd, LuLoaderCircle, LuPlus } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
-import axiosInstance from "../../utils/axiosInstance";
-import { API_PATHS } from "../../utils/apiPaths";
-import toast from "react-hot-toast";
 import moment from "moment";
-import Modal from "../../components/Modal";
+import toast from "react-hot-toast";
+import { useEffect, useState, useCallback } from "react";
+import { LuGalleryVerticalEnd, LuLoaderCircle, LuPlus } from "react-icons/lu";
 import Tabs from "../../components/Tabs";
-import BlogPostSummaryCard from "../../components/Cards/BlogPostSummaryCard";
+import Modal from "../../components/Modal";
+import { API_PATHS } from "../../utils/apiPaths";
+import axiosInstance from "../../utils/axiosInstance";
 import DeleteAlertContent from "../../components/DeleteAlertContent";
+import DashboardLayout from "../../components/layouts/DashboardLayout";
+import BlogPostSummaryCard from "../../components/Cards/BlogPostSummaryCard";
 
 const BlogPosts = () => {
   const navigate = useNavigate();
-
   const [tabs, setTabs] = useState([]);
   const [filterStatus, setFilterStatus] = useState("All");
   const [blogPostList, setBlogPostList] = useState([]);
@@ -28,54 +26,57 @@ const BlogPosts = () => {
   });
 
   // fetch all blog posts
-  const getAllPosts = async (pageNumber = 1) => {
-    try {
-      setIsLoading(true);
-      const response = await axiosInstance.get(API_PATHS.POSTS.GET_ALL, {
-        params: {
-          status: filterStatus.toLowerCase(),
-          page: pageNumber,
-        },
-      });
+  const getAllPosts = useCallback(
+    async (pageNumber = 1) => {
+      try {
+        setIsLoading(true);
+        const response = await axiosInstance.get(API_PATHS.POSTS.GET_ALL, {
+          params: {
+            status: filterStatus.toLowerCase(),
+            page: pageNumber,
+          },
+        });
 
-      const { posts, totalPages, counts } = response.data;
+        const { posts, totalPages, counts } = response.data;
 
-      setBlogPostList((prevPosts) =>
-        pageNumber === 1 ? posts : [...prevPosts, ...posts]
-      );
-      setTotalPages(totalPages);
-      setPage(pageNumber);
+        setBlogPostList((prevPosts) =>
+          pageNumber === 1 ? posts : [...prevPosts, ...posts]
+        );
+        setTotalPages(totalPages);
+        setPage(pageNumber);
 
-      // Map statusSummary data with fixed labels and order
-      const statusSummary = counts || {};
+        // Map statusSummary data with fixed labels and order
+        const statusSummary = counts || {};
 
-      const statusArray = [
-        { label: "All", count: statusSummary.all || 0 },
-        { label: "Published", count: statusSummary.published || 0 },
-        { label: "Draft", count: statusSummary.draft || 0 },
-      ];
+        const statusArray = [
+          { label: "Tất cả", count: statusSummary.all || 0 },
+          { label: "Đã đăng", count: statusSummary.published || 0 },
+          { label: "Bản nháp", count: statusSummary.draft || 0 },
+        ];
 
-      setTabs(statusArray);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+        setTabs(statusArray);
+      } catch (error) {
+        console.error("Lỗi khi lấy dữ liệu:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [filterStatus]
+  );
 
   // delete blog post
   const deletePost = async (postId) => {
     try {
       await axiosInstance.delete(API_PATHS.POSTS.DELETE(postId));
 
-      toast.success("Blog Post Deleted Successfully");
+      toast.success("Bài viết đã được xóa thành công");
       setOpenDeleteAlert({
         open: false,
         data: null,
       });
       getAllPosts();
     } catch (error) {
-      console.error("Error deleting blog post:", error);
+      console.error("Lỗi khi xóa bài viết:", error);
     }
   };
 
@@ -89,19 +90,21 @@ const BlogPosts = () => {
   useEffect(() => {
     getAllPosts(1);
     return () => {};
-  }, [filterStatus]);
+  }, [getAllPosts]);
 
   return (
     <DashboardLayout activeMenu="Blog Posts">
       <div className="w-auto sm:max-w-[900px] mx-auto">
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-semibold mt-5 mb-5">Blog Posts</h2>
+          <h2 className="text-2xl font-semibold mt-5 mb-5">
+            Bài đăng trên blog
+          </h2>
 
           <button
             className="btn-small"
             onClick={() => navigate("/admin/create")}
           >
-            <LuPlus className="text-[18px]" /> Create Post
+            <LuPlus className="text-[18px]" /> Tạo bài đăng
           </button>
         </div>
 
@@ -144,24 +147,23 @@ const BlogPosts = () => {
                 ) : (
                   <LuGalleryVerticalEnd className="text-lg" />
                 )}{" "}
-                {isLoading ? "Loading..." : "Load More"}
+                {isLoading ? "Đang tải..." : "Tải thêm"}
               </button>
             </div>
           )}
         </div>
       </div>
 
-
       <Modal
         isOpen={openDeleteAlert?.open}
         onClose={() => {
           setOpenDeleteAlert({ open: false, data: null });
         }}
-        title="Delete Alert"
+        title="Xác nhận xóa"
       >
         <div className="w-[70vw] md:w-[30vw]">
           <DeleteAlertContent
-            content="Are you sure you want to delete this blog post?"
+            content="Bạn có chắc chắn muốn xóa bài viết này không?"
             onDelete={() => deletePost(openDeleteAlert.data)}
           />
         </div>

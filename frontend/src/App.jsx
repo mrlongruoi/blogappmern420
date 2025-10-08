@@ -1,17 +1,16 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
-
-import BlogLandingPage from "./pages/Blog/BlogLandingPage";
-import BlogPostView from "./pages/Blog/BlogPostView";
-import PostByTags from "./pages/Blog/PostByTags";
-import SearchPosts from "./pages/Blog/SearchPosts";
-import AdminLogin from "./pages/Admin/AdminLogin";
-import PrivateRoute from "./routes/PrivateRoute";
+import Comments from "./pages/Admin/Comments";
 import Dashboard from "./pages/Admin/Dashboard";
 import BlogPosts from "./pages/Admin/BlogPosts";
+import PrivateRoute from "./routes/PrivateRoute";
+import PostByTags from "./pages/Blog/PostByTags";
+import AdminLogin from "./pages/Admin/AdminLogin";
+import SearchPosts from "./pages/Blog/SearchPosts";
+import UserProvider from "./context/userContext.jsx";
+import BlogPostView from "./pages/Blog/BlogPostView";
 import BlogPostEditor from "./pages/Admin/BlogPostEditor";
-import Comments from "./pages/Admin/Comments";
-import UserProvider from "./context/userContext";
+import BlogLandingPage from "./pages/Blog/BlogLandingPage";
 
 const App = () => {
   return (

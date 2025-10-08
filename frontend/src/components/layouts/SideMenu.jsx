@@ -1,9 +1,9 @@
-import React, { useContext } from "react";
-import { BLOG_NAVBAR_DATA, SIDE_MENU_DATA } from "../../utils/data";
-import { LuLogOut } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { LuLogOut } from "react-icons/lu";
 import CharAvatar from "../Cards/CharAvatar";
-import { UserContext } from "../../context/userContext";
+import { UserContext } from "../../context/contextValue";
+import { BLOG_NAVBAR_DATA, SIDE_MENU_DATA } from "../../utils/data";
 
 const SideMenu = ({ activeMenu, isBlogMenu, setOpenSideMenu }) => {
   const { user, setUser } = useContext(UserContext);
@@ -16,7 +16,6 @@ const SideMenu = ({ activeMenu, isBlogMenu, setOpenSideMenu }) => {
     }
 
     console.log(route);
-    
 
     setOpenSideMenu((prevState) => !prevState);
     navigate(route);
@@ -81,7 +80,7 @@ const SideMenu = ({ activeMenu, isBlogMenu, setOpenSideMenu }) => {
           onClick={() => handelLogout()}
         >
           <LuLogOut className="text-xl" />
-          Logout
+          Đăng xuất
         </button>
       )}
     </div>

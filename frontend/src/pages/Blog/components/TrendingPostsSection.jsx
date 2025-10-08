@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
-import axiosInstance from "../../../utils/axiosInstance";
-import { API_PATHS } from "../../../utils/apiPaths";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { API_PATHS } from "../../../utils/apiPaths";
+import axiosInstance from "../../../utils/axiosInstance";
 
 const TrendingPostsSection = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   const [postList, setPostList] = useState([]);
 
   // fetch trending blog posts
@@ -16,7 +16,7 @@ const TrendingPostsSection = () => {
 
       setPostList(response.data?.length > 0 ? response.data : []);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error("Lỗi tìm nạp dữ liệu:", error);
     }
   };
 
@@ -29,8 +29,9 @@ const TrendingPostsSection = () => {
     getTrendingPosts();
     return () => {};
   }, []);
-  return <div>
-      <h4 className="text-base text-black font-medium mb-3">Recent Posts</h4>
+  return (
+    <div>
+      <h4 className="text-base text-black font-medium mb-3">Bài viết gần đây</h4>
 
       {postList.length > 0 &&
         postList.map((item) => (
@@ -43,12 +44,14 @@ const TrendingPostsSection = () => {
           />
         ))}
     </div>
+  );
 };
 
 export default TrendingPostsSection;
 
-const PostCard =({title, coverImageUrl, tags, onClick})=>{
-    return <div className="cursor-pointer mb-3" onClick={onClick}>
+const PostCard = ({ title, coverImageUrl, tags, onClick }) => {
+  return (
+    <div className="cursor-pointer mb-3" onClick={onClick}>
       <h6 className="text-[10px] font-semibold text-sky-500">
         {tags[0]?.toUpperCase() || "BLOG"}
       </h6>
@@ -65,4 +68,5 @@ const PostCard =({title, coverImageUrl, tags, onClick})=>{
         </h2>
       </div>
     </div>
-}
+  );
+};

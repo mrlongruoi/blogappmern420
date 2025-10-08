@@ -12,7 +12,7 @@ const addComment = async (req, res) => {
     // Ensure blog post exists
     const post = await BlogPost.findById(postId);
     if (!post) {
-      return res.status(404).json({ message: "Post not found" });
+      return res.status(404).json({ message: "Bài viết không tồn tại" });
     }
 
     const comment = await Comment.create({
@@ -28,7 +28,7 @@ const addComment = async (req, res) => {
   } catch (error) {
     res
       .status(500)
-      .json({ message: "Failed to add comment", error: error.message });
+      .json({ message: "Không thể thêm bình luận", error: error.message });
   }
 };
 
@@ -41,11 +41,11 @@ const getAllComments = async (req, res) => {
     const comments = await Comment.find()
       .populate("author", "name profileImageUrl")
       .populate("post", "title coverImageUrl")
-      .sort({ createdAt: 1 }) // optional, so replies come in order
+      .sort({ createdAt: 1 }); // optional, so replies come in order
 
     // Create a map for commentId -> comment object
     const commentMap = {};
-    comments.forEach(comment => {
+    comments.forEach((comment) => {
       comment = comment.toObject(); // convert from Mongoose Document to plain object
       comment.replies = []; // initialize replies array
       commentMap[comment._id] = comment;
@@ -53,7 +53,7 @@ const getAllComments = async (req, res) => {
 
     // Nest replies under their parentComment
     const nestedComments = [];
-    comments.forEach(comment => {
+    comments.forEach((comment) => {
       if (comment.parentComment) {
         const parent = commentMap[comment.parentComment];
         if (parent) {
@@ -66,9 +66,10 @@ const getAllComments = async (req, res) => {
 
     res.json(nestedComments);
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Failed to fetch all comment", error: error.message });
+    res.status(500).json({
+      message: "Không thể lấy tất cả bình luận",
+      error: error.message,
+    });
   }
 };
 
@@ -76,17 +77,17 @@ const getAllComments = async (req, res) => {
 // @route   GET /api/comments/:postId
 // @access  Public
 const getCommentsByPost = async (req, res) => {
-   try {
+  try {
     const { postId } = req.params;
 
     const comments = await Comment.find({ post: postId })
       .populate("author", "name profileImageUrl")
       .populate("post", "title coverImageUrl")
-      .sort({ createdAt: 1 }) // optional, so replies come in order
+      .sort({ createdAt: 1 }); // optional, so replies come in order
 
     // Create a map for commentId -> comment object
     const commentMap = {};
-    comments.forEach(comment => {
+    comments.forEach((comment) => {
       comment = comment.toObject(); // convert from Mongoose Document to plain object
       comment.replies = []; // initialize replies array
       commentMap[comment._id] = comment;
@@ -94,7 +95,7 @@ const getCommentsByPost = async (req, res) => {
 
     // Nest replies under their parentComment
     const nestedComments = [];
-    comments.forEach(comment => {
+    comments.forEach((comment) => {
       if (comment.parentComment) {
         const parent = commentMap[comment.parentComment];
         if (parent) {
@@ -109,7 +110,7 @@ const getCommentsByPost = async (req, res) => {
   } catch (error) {
     res
       .status(500)
-      .json({ message: "Failed to fetch comments", error: error.message });
+      .json({ message: "Không thể lấy bình luận", error: error.message });
   }
 };
 
@@ -117,12 +118,12 @@ const getCommentsByPost = async (req, res) => {
 // @route   DELETE /api/comments/:commentId
 // @access  Private
 const deleteComment = async (req, res) => {
-   try {
+  try {
     const { commentId } = req.params;
 
     const comment = await Comment.findById(commentId);
     if (!comment) {
-      return res.status(404).json({ message: "Comment not found" });
+      return res.status(404).json({ message: "Bình luận không tồn tại" });
     }
 
     // Delete the comment
@@ -131,11 +132,11 @@ const deleteComment = async (req, res) => {
     // Delete all replies to this comment (one level of nesting only)
     await Comment.deleteMany({ parentComment: commentId });
 
-    res.json({ message: "Comment and any replies deleted successfully" });
+    res.json({ message: "Bình luận và các phản hồi đã được xóa thành công" });
   } catch (error) {
     res
       .status(500)
-      .json({ message: "Failed to delete comment", error: error.message });
+      .json({ message: "Không thể xóa bình luận", error: error.message });
   }
 };
 
@@ -143,5 +144,5 @@ module.exports = {
   addComment,
   getCommentsByPost,
   deleteComment,
-  getAllComments
+  getAllComments,
 };

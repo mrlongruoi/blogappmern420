@@ -1,9 +1,8 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { LuLoaderCircle } from "react-icons/lu";
+import { API_PATHS } from "../../../utils/apiPaths";
 import Input from "../../../components/Inputs/Input";
 import axiosInstance from "../../../utils/axiosInstance";
-import { API_PATHS } from "../../../utils/apiPaths";
-import { LuLoaderCircle } from "react-icons/lu";
 
 const GenerateBlogPostForm = ({
   contentParams,
@@ -18,8 +17,6 @@ const GenerateBlogPostForm = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const navigate = useNavigate();
-
   const handleChange = (key, value) => {
     setFormData((prevData) => ({
       ...prevData,
@@ -33,7 +30,7 @@ const GenerateBlogPostForm = ({
     const { title, tone } = formData;
 
     if (!title || !tone) {
-      setError("Please fill all the required fields.");
+      setError("Vui lòng điền đầy đủ các trường bắt buộc.");
       return;
     }
 
@@ -57,7 +54,7 @@ const GenerateBlogPostForm = ({
       if (error.response && error.response.data.message) {
         setError(error.response.data.message);
       } else {
-        setError("Something went wrong. Please try again.");
+        setError("Có gì đó không ổn. Vui lòng thử lại.");
       }
     } finally {
       setIsLoading(false);
@@ -66,25 +63,27 @@ const GenerateBlogPostForm = ({
 
   return (
     <div className="w-[90vw] md:w-[35vw] p-7 flex flex-col justify-center">
-      <h3 className="text-lg font-semibold text-black">Generate a Blog Post</h3>
+      <h3 className="text-lg font-semibold text-black">
+        Tạo một bài đăng trên blog
+      </h3>
       <p className="text-xs text-slate-700 mt-[5px] mb-3">
-        Provide a title and tone to generate your blog post.
+        Cung cấp tiêu đề và giọng điệu để tạo bài đăng trên blog của bạn.
       </p>
 
       <form onSubmit={handleGenerateBlogPost} className="flex flex-col gap-3">
         <Input
           value={formData.title}
           onChange={({ target }) => handleChange("title", target.value)}
-          label="Blog Post Title"
-          placeholder=""
+          label="Tiêu đề bài đăng trên blog"
+          placeholder="Ví dụ: Lập trình React Hooks, v.v."
           type="text"
         />
 
         <Input
           value={formData.tone}
           onChange={({ target }) => handleChange("tone", target.value)}
-          label="Tone"
-          placeholder="beginner friendly, technical, casual, etc"
+          label="Giọng điệu"
+          placeholder="Ví dụ: thân thiện với người mới bắt đầu, kỹ thuật, bình thường, v.v."
           type="text"
         />
 
@@ -96,7 +95,7 @@ const GenerateBlogPostForm = ({
           disabled={isLoading}
         >
           {isLoading && <LuLoaderCircle className="animate-spin text-[18px]" />}{" "}
-          {isLoading ? "Generating..." : "Generate Post"}
+          {isLoading ? "Đang tạo..." : "Tạo bài đăng"}
         </button>
       </form>
     </div>

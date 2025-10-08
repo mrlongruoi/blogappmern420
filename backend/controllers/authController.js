@@ -12,11 +12,12 @@ const generateToken = (userId) => {
 // @access  Public
 const registerUser = async (req, res) => {
   try {
-    const { name, email, password, profileImageUrl, bio, adminAccessToken } = req.body;
+    const { name, email, password, profileImageUrl, bio, adminAccessToken } =
+      req.body;
 
     const userExists = await User.findOne({ email });
     if (userExists) {
-      return res.status(400).json({ message: "User already exists" });
+      return res.status(400).json({ message: "Người dùng đã tồn tại" });
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -50,7 +51,7 @@ const registerUser = async (req, res) => {
       token: generateToken(user._id),
     });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    res.status(500).json({ message: "Lỗi máy chủ", error: error.message });
   }
 };
 
@@ -63,13 +64,17 @@ const loginUser = async (req, res) => {
 
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(500).json({ message: "Invalid email or password" });
+      return res
+        .status(500)
+        .json({ message: "Email hoặc mật khẩu không hợp lệ" });
     }
 
     // Compare password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(500).json({ message: "Invalid email or password" });
+      return res
+        .status(500)
+        .json({ message: "Email hoặc mật khẩu không hợp lệ" });
     }
 
     // Return user data with JWT
@@ -82,7 +87,7 @@ const loginUser = async (req, res) => {
       token: generateToken(user._id),
     });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    res.status(500).json({ message: "Lỗi máy chủ", error: error.message });
   }
 };
 
@@ -93,13 +98,12 @@ const getUserProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("-password");
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: "Người dùng không tồn tại" });
     }
     res.json(user);
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    res.status(500).json({ message: "Lỗi máy chủ", error: error.message });
   }
 };
-
 
 module.exports = { registerUser, loginUser, getUserProfile };

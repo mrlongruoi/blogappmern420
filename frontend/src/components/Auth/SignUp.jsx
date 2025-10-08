@@ -1,24 +1,21 @@
-import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axiosInstance from "../../utils/axiosInstance";
-import { API_PATHS } from "../../utils/apiPaths";
-import { UserContext } from "../../context/userContext";
-
-import AUTH_IMG from '../../assets/auth-img.jpg'
+import { useContext, useState } from "react";
 import Input from "../Inputs/Input";
-import { validateEmail } from "../../utils/helper";
-import ProfilePhotoSelector from "../Inputs/ProfilePhotoSelector";
+import AUTH_IMG from "../../assets/auth-img.jpg";
+import { API_PATHS } from "../../utils/apiPaths";
 import uploadImage from "../../utils/uploadImage";
+import { validateEmail } from "../../utils/helper";
+import axiosInstance from "../../utils/axiosInstance";
+import { UserContext } from "../../context/contextValue";
+import ProfilePhotoSelector from "../Inputs/ProfilePhotoSelector";
 
-const SignUp = ({setCurrentPage}) => {
+const SignUp = ({ setCurrentPage }) => {
   const [profilePic, setProfilePic] = useState(null);
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [adminAccessToken, setAdminAccessToken] = useState("");
-
   const [error, setError] = useState(null);
-
   const { updateUser, setOpenAuthForm } = useContext(UserContext);
   const navigate = useNavigate();
 
@@ -29,17 +26,17 @@ const SignUp = ({setCurrentPage}) => {
     let profileImageUrl = "";
 
     if (!fullName) {
-      setError("Please enter full name.");
+      setError("Vui lòng nhập tên đầy đủ.");
       return;
     }
 
     if (!validateEmail(email)) {
-      setError("Please enter a valid email address.");
+      setError("Vui lòng nhập một địa chỉ email hợp lệ.");
       return;
     }
 
     if (!password) {
-      setError("Please enter the password");
+      setError("Vui lòng nhập mật khẩu.");
       return;
     }
 
@@ -58,7 +55,7 @@ const SignUp = ({setCurrentPage}) => {
         email,
         password,
         profileImageUrl,
-        adminAccessToken
+        adminAccessToken,
       });
 
       const { token, role } = response.data;
@@ -69,38 +66,38 @@ const SignUp = ({setCurrentPage}) => {
 
         //Redirect based on role
         if (role === "admin") {
-          setOpenAuthForm(false)
+          setOpenAuthForm(false);
           navigate("/admin/dashboard");
         }
 
         navigate("/");
-        setOpenAuthForm(false)
+        setOpenAuthForm(false);
       }
     } catch (error) {
       if (error.response && error.response.data.message) {
         setError(error.response.data.message);
       } else {
-        setError("Something went wrong. Please try again.");
+        setError("Đã xảy ra lỗi. Vui lòng thử lại.");
       }
     }
   };
   return (
     <div className="flex items-center h-auto md:h-[520px]">
       <div className="w-[90vw] md:w-[43vw] p-7 flex flex-col justify-center">
-        <h3 className="text-lg font-semibold text-black">Create an Account</h3>
+        <h3 className="text-lg font-semibold text-black">Tạo tài khoản</h3>
         <p className="text-xs text-slate-700 mt-[5px] mb-6">
-          Join us today by entering your details below.
+          Tham gia cùng chúng tôi hôm nay bằng cách nhập thông tin của bạn bên
+          dưới.
         </p>
 
         <form onSubmit={handleSignUp}>
-
           <ProfilePhotoSelector image={profilePic} setImage={setProfilePic} />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <Input
               value={fullName}
               onChange={({ target }) => setFullName(target.value)}
-              label="Full Name"
+              label="Họ và Tên"
               placeholder="John"
               type="text"
             />
@@ -108,24 +105,24 @@ const SignUp = ({setCurrentPage}) => {
             <Input
               value={email}
               onChange={({ target }) => setEmail(target.value)}
-              label="Email Address"
-              placeholder="john@example.com"
+              label="Địa chỉ E-mail"
+              placeholder="example@mail.com"
               type="text"
             />
 
             <Input
               value={password}
               onChange={({ target }) => setPassword(target.value)}
-              label="Password"
-              placeholder="Min 8 Characters"
+              label="Mật khẩu"
+              placeholder="Mật khẩu phải có ít nhất 8 kí tự"
               type="password"
             />
 
             <Input
               value={adminAccessToken}
               onChange={({ target }) => setAdminAccessToken(target.value)}
-              label="Admin Invite Token"
-              placeholder="6 Digit Code"
+              label="Mã mời quản trị viên"
+              placeholder="Mã 6 chữ số"
               type="number"
             />
           </div>
@@ -133,18 +130,18 @@ const SignUp = ({setCurrentPage}) => {
           {error && <p className="text-red-500 text-xs pb-2.5">{error}</p>}
 
           <button type="submit" className="btn-primary">
-            SIGN UP
+            ĐĂNG KÝ
           </button>
 
           <p className="text-[13px] text-slate-800 mt-3">
-            Already an account?{" "}
+            Đã có tài khoản?{" "}
             <button
               className="font-medium text-primary underline cursor-pointer"
               onClick={() => {
                 setCurrentPage("login");
               }}
             >
-              Login
+              Đăng nhập
             </button>
           </p>
         </form>
@@ -154,7 +151,7 @@ const SignUp = ({setCurrentPage}) => {
         <img src={AUTH_IMG} alt="Login" className="h-[520px] w-[33vw]" />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default SignUp
+export default SignUp;

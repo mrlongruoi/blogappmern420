@@ -1,16 +1,17 @@
-import React, { useContext } from "react";
-import { UserContext } from "../../context/userContext";
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { UserContext } from "../../context/contextValue";
 
 const ProfileInfoCard = () => {
   const { user, clearUser } = useContext(UserContext);
   const navigate = useNavigate();
 
-  const handelLogout = () => {
+  const handleLogout = () => {
     localStorage.clear();
     clearUser();
     navigate("/");
   };
+
   return (
     user && (
       <div className="flex items-center">
@@ -25,9 +26,9 @@ const ProfileInfoCard = () => {
           </div>
           <button
             className="text-sky-600 text-sm font-semibold cursor-pointer hover:underline"
-            onClick={handelLogout}
+            onClick={handleLogout}
           >
-            Logout
+            Đăng xuất
           </button>
         </div>
       </div>

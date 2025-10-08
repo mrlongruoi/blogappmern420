@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
-import DashboardLayout from "../../components/layouts/DashboardLayout";
-import MDEditor, { commands } from "@uiw/react-md-editor";
+import { useNavigate, useParams } from "react-router-dom";
+import toast from "react-hot-toast";
 import {
   LuLoaderCircle,
   LuSave,
@@ -8,19 +7,22 @@ import {
   LuSparkles,
   LuTrash2,
 } from "react-icons/lu";
-import axiosInstance from "../../utils/axiosInstance";
-import { API_PATHS } from "../../utils/apiPaths";
-import { useNavigate, useParams } from "react-router-dom";
-import CoverImageSelector from "../../components/Inputs/CoverImageSelector";
-import TagInput from "../../components/Inputs/TagInput";
-import SkeletonLoader from "../../components/Loader/SkeletonLoader";
-import BlogPostIdeaCard from "../../components/Cards/BlogPostIdeaCard";
+import { useEffect, useState, useCallback } from "react";
 import Modal from "../../components/Modal";
-import GenerateBlogPostForm from "./components/GenerateBlogPostForm";
+import { API_PATHS } from "../../utils/apiPaths";
 import uploadImage from "../../utils/uploadImage";
-import toast from "react-hot-toast";
+import axiosInstance from "../../utils/axiosInstance";
+import TagInput from "../../components/Inputs/TagInput";
+import MDEditor, { commands } from "@uiw/react-md-editor";
+import { suggestTagsForPost } from "../../constants/aiTopicsHelper";
+import { mapTagsToNav } from "../../constants/tagMapper";
 import { getToastMessagesByType } from "../../utils/helper";
+import SkeletonLoader from "../../components/Loader/SkeletonLoader";
+import GenerateBlogPostForm from "./components/GenerateBlogPostForm";
 import DeleteAlertContent from "../../components/DeleteAlertContent";
+import DashboardLayout from "../../components/layouts/DashboardLayout";
+import BlogPostIdeaCard from "../../components/Cards/BlogPostIdeaCard";
+import CoverImageSelector from "../../components/Inputs/CoverImageSelector";
 
 const BlogPostEditor = ({ isEdit }) => {
   const navigate = useNavigate();
@@ -54,52 +56,30 @@ const BlogPostEditor = ({ isEdit }) => {
     setPostData((prevData) => ({ ...prevData, [key]: value }));
   };
 
-  // Generate Blog Post Ideas Using AI
-  const generatePostIdeas = async () => {
-    setIdeaLoading(true);
-    try {
-      const aiResponse = await axiosInstance.post(
-        API_PATHS.AI.GENERATE_BLOG_POST_IDEAS,
-        {
-          topics: "React JS, Next JS, Node JS, React UI Components",
-        }
-      );
-      const generatedIdeas = aiResponse.data;
-
-      if (generatedIdeas?.length > 0) {
-        setPostIdeas(generatedIdeas);
-      }
-    } catch (error) {
-      console.log("Something went wrong. Please try again.", error);
-    } finally {
-      setIdeaLoading(false);
-    }
-  };
-
   // Handle Blog Post Publish
   const handlePublish = async (isDraft) => {
     let coverImageUrl = "";
 
     if (!postData.title.trim()) {
-      setError("Please enter a title.");
+      setError("Vui lòng nhập tiêu đề.");
       return;
     }
     if (!postData.content.trim()) {
-      setError("Please enter some content.");
+      setError("Vui lòng nhập một số nội dung.");
       return;
     }
 
     if (!isDraft) {
       if (!isEdit && !postData.coverImageUrl) {
-        setError("Please select a cover image.");
+        setError("Vui lòng chọn ảnh bìa.");
         return;
       }
       if (isEdit && !postData.coverImageUrl && !postData.coverPreview) {
-        setError("Please select a cover image.");
+        setError("Vui lòng chọn ảnh bìa.");
         return;
       }
       if (!postData.tags.length) {
-        setError("Please add some tags.");
+        setError("Vui lòng thêm tag cho bài viết.");
         return;
       }
     }
@@ -140,61 +120,92 @@ const BlogPostEditor = ({ isEdit }) => {
         navigate("/admin/posts");
       }
     } catch (error) {
-      setError("Failed to publish blog post. Please try again.");
-      console.error("Error publishing blog post:", error);
+      setError("Không thể đăng bài viết trên blog. Vui lòng thử lại.");
+      console.error("Lỗi xuất bản bài đăng trên blog:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  // Get Post Data By slug
-  const fetchPostDetailsBySlug = async () => {
+  useEffect(() => {
+    const fetchPostDetailsBySlug = async () => {
+      try {
+        const response = await axiosInstance.get(
+          API_PATHS.POSTS.GET_BY_SLUG(postSlug)
+        );
+
+        if (response.data) {
+          const data = response.data;
+
+          setPostData((prevState) => ({
+            ...prevState,
+            id: data._id,
+            title: data.title,
+            content: data.content,
+            coverPreview: data.coverImageUrl,
+            tags: data.tags,
+            isDraft: data.isDraft,
+            generatedByAI: data.generatedByAI,
+          }));
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+
+    if (isEdit) {
+      fetchPostDetailsBySlug();
+    }
+    // depend on isEdit and postSlug so effect runs when those change
+  }, [isEdit, postSlug]);
+
+  // Generate ideas when creating a new post or when title/content change
+  useEffect(() => {
+    if (isEdit) return; // only for new posts
+    // debounce: only call after user has typed a bit; quick heuristic with timeout
+    const id = setTimeout(() => {
+      fetchIdeas();
+    }, 600);
+
+    return () => clearTimeout(id);
+  }, [isEdit, postData.title, postData.content]);
+
+  // fetchIdeas is exposed so the UI can request a fresh set of ideas on demand
+  const fetchIdeas = useCallback(async () => {
+    if (isEdit) return;
+    setIdeaLoading(true);
     try {
-      const response = await axiosInstance.get(
-        API_PATHS.POSTS.GET_BY_SLUG(postSlug)
+      const suggested = suggestTagsForPost(postData.title, postData.content, 5);
+      const aiResponse = await axiosInstance.post(
+        API_PATHS.AI.GENERATE_BLOG_POST_IDEAS,
+        {
+          topics: suggested.join(", "),
+        }
       );
+      const generatedIdeas = aiResponse.data;
 
-      if (response.data) {
-        const data = response.data;
-
-        setPostData((prevState) => ({
-          ...prevState,
-          id: data._id,
-          title: data.title,
-          content: data.content,
-          coverPreview: data.coverImageUrl,
-          tags: data.tags,
-          isDraft: data.isDraft,
-          generatedByAI: data.generatedByAI,
-        }));
+      if (generatedIdeas?.length > 0) {
+        setPostIdeas(generatedIdeas);
       }
     } catch (error) {
-      console.error("Error:", error);
+      console.log("Có gì đó không ổn. Vui lòng thử lại.", error);
+    } finally {
+      setIdeaLoading(false);
     }
-  };
+  }, [isEdit, postData.title, postData.content]);
 
   // Delete Blog Post
   const deletePost = async () => {
     try {
       await axiosInstance.delete(API_PATHS.POSTS.DELETE(postData.id));
 
-      toast.success("Blog Post Deleted Successfully");
+      toast.success("Xóa bài đăng trên blog thành công");
       setOpenDeleteAlert(false);
       navigate("/admin/posts");
     } catch (error) {
-      console.error("Error deleting blog post:", error);
+      console.error("Lỗi xóa bài đăng trên blog:", error);
     }
   };
-
-  useEffect(() => {
-    if (isEdit) {
-      fetchPostDetailsBySlug();
-    } else {
-      generatePostIdeas();
-    }
-
-    return () => {};
-  }, []);
 
   return (
     <DashboardLayout activeMenu="Blog Posts">
@@ -203,7 +214,7 @@ const BlogPostEditor = ({ isEdit }) => {
           <div className="form-card p-6 col-span-12 md:col-span-8">
             <div className="flex items-center justify-between">
               <h2 className="text-base md:text-lg font-medium">
-                {!isEdit ? "Add New Post" : "Edit Post"}
+                {!isEdit ? "Thêm Bài Đăng Mới" : "Chỉnh Sửa Bài Đăng"}
               </h2>
 
               <div className="flex items-center gap-3">
@@ -214,7 +225,7 @@ const BlogPostEditor = ({ isEdit }) => {
                     onClick={() => setOpenDeleteAlert(true)}
                   >
                     <LuTrash2 className="text-sm" />{" "}
-                    <span className="hidden md:block">Delete</span>
+                    <span className="hidden md:block">Xóa bỏ</span>
                   </button>
                 )}
 
@@ -224,7 +235,7 @@ const BlogPostEditor = ({ isEdit }) => {
                   onClick={() => handlePublish(true)}
                 >
                   <LuSave className="text-sm" />{" "}
-                  <span className="hidden md:block">Save as Draft</span>
+                  <span className="hidden md:block">Lưu dưới dạng nháp</span>
                 </button>
 
                 <button
@@ -237,7 +248,7 @@ const BlogPostEditor = ({ isEdit }) => {
                   ) : (
                     <LuSend className="text-sm" />
                   )}{" "}
-                  Publish
+                  Xuất bản
                 </button>
               </div>
             </div>
@@ -246,11 +257,11 @@ const BlogPostEditor = ({ isEdit }) => {
 
             <div className="mt-4">
               <label className="text-xs font-medium text-slate-600">
-                Post Title
+                Tiêu đề bài đăng
               </label>
 
               <input
-                placeholder="How to Build a MERN App"
+                placeholder="Ví dụ: Cách xây dựng ứng dụng MERN, v.v."
                 className="form-input"
                 value={postData.title}
                 onChange={({ target }) =>
@@ -270,7 +281,7 @@ const BlogPostEditor = ({ isEdit }) => {
 
             <div className="mt-3">
               <label className="text-xs font-medium text-slate-600">
-                Content
+                Nội dung
               </label>
 
               <div data-color-mode="light" className="mt-3">
@@ -293,13 +304,12 @@ const BlogPostEditor = ({ isEdit }) => {
                     commands.orderedListCommand,
                     commands.checkedListCommand,
                   ]}
-                  hideMenu={true}
                 />
               </div>
             </div>
 
             <div className="mt-3">
-              <label className="text-xs font-medium text-slate-600">Tags</label>
+              <label className="text-xs font-medium text-slate-600">Thẻ</label>
 
               <TagInput
                 tags={postData?.tags || []}
@@ -317,17 +327,33 @@ const BlogPostEditor = ({ isEdit }) => {
                   <span className="text-sky-600">
                     <LuSparkles />
                   </span>
-                  Ideas for your next post
+                  Ý tưởng cho bài viết tiếp theo của bạn
                 </h4>
 
-                <button
-                  className="bg-linear-to-r from-sky-500 to-cyan-400 text-[13px] font-semibold text-white px-3 py-1 rounded hover:bg-black hover:text-white transition-colors cursor-pointer hover:shadow-2xl hover:shadow-sky-200"
-                  onClick={() =>
-                    setOpenBlogPostGenForm({ open: true, data: null })
-                  }
-                >
-                  Generate New
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    className="bg-linear-to-r from-sky-500 to-cyan-400 text-[13px] font-semibold text-white px-3 py-1 rounded hover:bg-black hover:text-white transition-colors cursor-pointer hover:shadow-2xl hover:shadow-sky-200 min-w-[120px] flex items-center justify-center"
+                    onClick={() =>
+                      setOpenBlogPostGenForm({ open: true, data: null })
+                    }
+                  >
+                    <span className="select-none">Tạo mới</span>
+                  </button>
+
+                  <button
+                    className="bg-linear-to-r from-sky-500 to-cyan-400 text-[13px] font-semibold text-white px-3 py-1 rounded hover:bg-black hover:text-white transition-colors cursor-pointer hover:shadow-2xl hover:shadow-sky-200 min-w-[160px] flex items-center justify-center"
+                    onClick={() => fetchIdeas()}
+                    disabled={ideaLoading}
+                    title="Tải ý tưởng mới"
+                  >
+                    <span className="flex items-center gap-2">
+                      <LuLoaderCircle
+                        className={`${ideaLoading ? "animate-spin text-[12px]" : "opacity-0 text-[12px]"}`}
+                      />
+                      <span className="select-none">Tải ý tưởng mới</span>
+                    </span>
+                  </button>
+                </div>
               </div>
 
               <div>
@@ -366,13 +392,16 @@ const BlogPostEditor = ({ isEdit }) => {
           contentParams={openBlogPostGenForm?.data || null}
           setPostContent={(title, content) => {
             const postInfo = openBlogPostGenForm?.data || null;
-            setPostData((prevState) => ({
-              ...prevState,
-              title: title || prevState.title,
-              content: content,
-              tags: postInfo?.tags || prevState.tags,
-              generatedByAI: true,
-            }));
+              // map incoming idea tags to navbar slugs (e.g. 'dev-ops') when possible
+              const incomingTags = postInfo?.tags || [];
+              const mapped = mapTagsToNav(incomingTags).map((s) => `${s}`);
+              setPostData((prevState) => ({
+                ...prevState,
+                title: title || prevState.title,
+                content: content,
+                tags: mapped.length ? mapped : postInfo?.tags || prevState.tags,
+                generatedByAI: true,
+              }));
           }}
           handleCloseForm={() => {
             setOpenBlogPostGenForm({ open: false, data: null });
@@ -385,11 +414,11 @@ const BlogPostEditor = ({ isEdit }) => {
         onClose={() => {
           setOpenDeleteAlert(false);
         }}
-        title="Delete Alert"
+        title="Cảnh báo xóa"
       >
         <div className="w-[30vw]">
           <DeleteAlertContent
-            content="Are you sure you want to delete this blog post?"
+            content="Bạn có chắc chắn muốn xóa bài viết này không?"
             onDelete={() => deletePost()}
           />
         </div>

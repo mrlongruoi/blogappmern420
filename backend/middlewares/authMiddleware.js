@@ -3,20 +3,22 @@ const User = require("../models/User");
 
 // Middleware to protect routes
 const protect = async (req, res, next) => {
-    try {
-        let token = req.headers.authorization;
+  try {
+    let token = req.headers.authorization;
 
-        if (token && token.startsWith("Bearer")) {
-            token = token.split(" ")[1]; // Extract token
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            req.user = await User.findById(decoded.id).select("-password");
-            next();
-        } else {
-            res.status(401).json({ message: "Not authorized, no token" });
-        }
-    } catch (error) {
-        res.status(401).json({ message: "Token failed", error: error.message });
+    if (token && token.startsWith("Bearer")) {
+      token = token.split(" ")[1]; // Extract token
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      req.user = await User.findById(decoded.id).select("-password");
+      next();
+    } else {
+      res.status(401).json({ message: "Không được phép, không có token" });
     }
+  } catch (error) {
+    res
+      .status(401)
+      .json({ message: "Token không hợp lệ", error: error.message });
+  }
 };
 
 module.exports = { protect };

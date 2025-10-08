@@ -1,18 +1,16 @@
-import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axiosInstance from "../../utils/axiosInstance";
-import { API_PATHS } from "../../utils/apiPaths";
-import { UserContext } from "../../context/userContext";
-
-import AUTH_IMG from '../../assets/auth-img.jpg'
+import { useContext, useState } from "react";
 import Input from "../Inputs/Input";
+import { API_PATHS } from "../../utils/apiPaths";
+import AUTH_IMG from "../../assets/auth-img.jpg";
 import { validateEmail } from "../../utils/helper";
+import axiosInstance from "../../utils/axiosInstance";
+import { UserContext } from "../../context/contextValue";
 
-const Login = ({setCurrentPage}) => {
+const Login = ({ setCurrentPage }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
-
   const { updateUser, setOpenAuthForm } = useContext(UserContext);
   const navigate = useNavigate();
 
@@ -21,12 +19,12 @@ const Login = ({setCurrentPage}) => {
     e.preventDefault();
 
     if (!validateEmail(email)) {
-      setError("Please enter a valid email address.");
+      setError("Vui lòng nhập một địa chỉ email hợp lệ.");
       return;
     }
 
     if (!password) {
-      setError("Please enter the password");
+      setError("Vui lòng nhập mật khẩu.");
       return;
     }
 
@@ -47,17 +45,17 @@ const Login = ({setCurrentPage}) => {
 
         //Redirect based on role
         if (role === "admin") {
-          setOpenAuthForm(false)
+          setOpenAuthForm(false);
           navigate("/admin/dashboard");
         }
 
-        setOpenAuthForm(false)
+        setOpenAuthForm(false);
       }
     } catch (error) {
       if (error.response && error.response.data.message) {
         setError(error.response.data.message);
       } else {
-        setError("Something went wrong. Please try again.");
+        setError("Đã xảy ra lỗi. Vui lòng thử lại.");
       }
     }
   };
@@ -65,44 +63,45 @@ const Login = ({setCurrentPage}) => {
   return (
     <div className="flex items-center">
       <div className="w-[90vw] md:w-[33vw] p-7 flex flex-col justify-center">
-        <h3 className="text-lg font-semibold text-black">Welcome Back</h3>
+        <h3 className="text-lg font-semibold text-black">
+          Chào mừng bạn trở lại
+        </h3>
         <p className="text-xs text-slate-700 mt-[2px] mb-6">
-          Please enter your details to log in
+          Vui lòng nhập thông tin của bạn để đăng nhập
         </p>
 
         <form onSubmit={handleLogin}>
-          
           <Input
             value={email}
             onChange={({ target }) => setEmail(target.value)}
-            label="Email Address"
-            placeholder="john@example.com"
+            label="Địa chỉ E-mail"
+            placeholder="example@mail.com"
             type="text"
           />
 
           <Input
             value={password}
             onChange={({ target }) => setPassword(target.value)}
-            label="Password"
-            placeholder="Min 8 Characters"
+            label="Mật khẩu"
+            placeholder="Tối thiểu 8 ký tự"
             type="password"
           />
 
           {error && <p className="text-red-500 text-xs pb-2.5">{error}</p>}
 
           <button type="submit" className="btn-primary">
-            LOGIN
+            ĐĂNG NHẬP
           </button>
 
           <p className="text-[13px] text-slate-800 mt-3">
-            Don’t have an account?{" "}
+            Bạn chưa có tài khoản?{" "}
             <button
               className="font-medium text-primary underline cursor-pointer"
               onClick={() => {
                 setCurrentPage("signup");
               }}
             >
-              SignUp
+              Đăng ký
             </button>
           </p>
         </form>
@@ -112,7 +111,7 @@ const Login = ({setCurrentPage}) => {
         <img src={AUTH_IMG} alt="Login" className="h-[400px]" />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

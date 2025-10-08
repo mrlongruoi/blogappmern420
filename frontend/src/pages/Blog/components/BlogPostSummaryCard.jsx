@@ -1,4 +1,3 @@
-import React from "react";
 import { useNavigate } from "react-router-dom";
 
 const BlogPostSummaryCard = ({
@@ -11,8 +10,9 @@ const BlogPostSummaryCard = ({
   authProfileImg,
   onClick,
 }) => {
-    const navigate = useNavigate()
-  return  <div
+  const navigate = useNavigate();
+  return (
+    <div
       className="bg-white shadow-lg shadow-gray-100 rounded-xl overflow-hidden cursor-pointer"
       onClick={onClick}
     >
@@ -58,6 +58,7 @@ const BlogPostSummaryCard = ({
         </div>
       </div>
     </div>
+  );
 };
 
 export default BlogPostSummaryCard;

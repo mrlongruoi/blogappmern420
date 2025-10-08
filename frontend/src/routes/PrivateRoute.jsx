@@ -1,12 +1,15 @@
-import React, { useContext } from "react";
 import { Navigate, Outlet } from "react-router-dom";
-import { UserContext } from "../context/userContext";
+import { useContext } from "react";
+import { UserContext } from "../context/contextValue";
 
-const PrivateRoute = ({allowedRoles}) => {
-    const { user, loading } = useContext(UserContext);
+const PrivateRoute = ({ allowedRoles }) => {
+  // Defensive: sometimes during HMR the context module can be temporarily
+  // undefined which would cause destructure errors. Guard against that.
+  const ctx = useContext(UserContext) || {};
+  const { user, loading } = ctx;
 
-  if (loading) {
-    return <div>Loading...</div>; // Show a loading indicator
+  if (loading || loading === undefined) {
+    return <div>Đang tải...</div>; // Show a loading indicator
   }
 
   if (!user) {

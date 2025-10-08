@@ -1,6 +1,4 @@
-import React, { useState } from "react";
-import axiosInstance from "../../utils/axiosInstance";
-import { API_PATHS } from "../../utils/apiPaths";
+import { useState } from "react";
 import {
   LuLoaderCircle,
   LuReply,
@@ -8,6 +6,8 @@ import {
   LuWandSparkles,
 } from "react-icons/lu";
 import Input from "./Input";
+import { API_PATHS } from "../../utils/apiPaths";
+import axiosInstance from "../../utils/axiosInstance";
 
 const CommentReplyInput = ({
   user,
@@ -40,7 +40,7 @@ const CommentReplyInput = ({
         setReplyText(generatedReply);
       }
     } catch (error) {
-      console.log("Something went wrong. Please try again.", error);
+      console.log("Đã có lỗi xảy ra. Vui lòng thử lại.", error);
     } finally {
       setLoading(false);
     }
@@ -59,7 +59,7 @@ const CommentReplyInput = ({
             value={replyText}
             onChange={({ target }) => setReplyText(target.value)}
             label={type == "new" ? authorName : `Reply to ${authorName}`}
-            placeholder={type == "new" ? "Message" : "Add a reply"}
+            placeholder={type == "new" ? "Gửi tin nhắn" : "Thêm phản hồi"}
             type="text"
           />
 
@@ -69,7 +69,7 @@ const CommentReplyInput = ({
               disabled={loading}
               onClick={handleCancelReply}
             >
-              Cancel
+              Hủy
             </button>
 
             <button
@@ -82,7 +82,7 @@ const CommentReplyInput = ({
               ) : (
                 <LuReply className="text-[18px]" />
               )}{" "}
-              {type == "new" ? "Add" : "Reply"}
+              {type == "new" ? "Gửi" : "Phản hồi"}
             </button>
           </div>
         </div>
@@ -98,7 +98,7 @@ const CommentReplyInput = ({
             ) : (
               <LuWandSparkles className="text-[15px]" />
             )}{" "}
-            {loading ? "Generating..." : "Gererate Reply"}
+            {loading ? "Đang tạo..." : "Tạo phản hồi"}
           </button>
         )}
       </div>

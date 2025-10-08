@@ -6,7 +6,7 @@ const Comment = require("../models/Comment");
 // @access  Private (Admin only)
 const getDashboardSummary = async (req, res) => {
   try {
-     // Basic counts
+    // Basic counts
     const [totalPosts, drafts, published, totalComments, aiGenerated] =
       await Promise.all([
         BlogPost.countDocuments(),
@@ -62,7 +62,7 @@ const getDashboardSummary = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
-      message: "Failed to fetch dashboard summary",
+      message: "Không thể lấy thông tin tổng quan bảng điều khiển",
       error: error.message,
     });
   }

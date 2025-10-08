@@ -1,5 +1,3 @@
-import React from 'react'
-
 const SkeletonLoader = () => {
   return (
     <>
@@ -30,7 +28,6 @@ const SkeletonLoader = () => {
           <div className="h-3 bg-gray-200 rounded dark:bg-gray-700 w-9/12"></div>
         </div>
 
-
         <div className="space-y-2">
           <div className="h-3 bg-gray-200 rounded dark:bg-gray-700 w-full"></div>
           <div className="h-3 bg-gray-200 rounded dark:bg-gray-700 w-11/12"></div>
@@ -53,7 +50,7 @@ const SkeletonLoader = () => {
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default SkeletonLoader
+export default SkeletonLoader;

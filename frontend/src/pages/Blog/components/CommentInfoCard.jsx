@@ -1,11 +1,11 @@
-import React, { useContext, useState } from "react";
 import moment from "moment";
-import { LuChevronDown, LuDot, LuReply, LuTrash2 } from "react-icons/lu";
 import toast from "react-hot-toast";
-import { UserContext } from "../../../context/userContext";
-import CommentReplyInput from "../../../components/Inputs/CommentReplyInput";
+import { useContext, useState } from "react";
+import { LuChevronDown, LuDot, LuReply } from "react-icons/lu";
 import { API_PATHS } from "../../../utils/apiPaths";
 import axiosInstance from "../../../utils/axiosInstance";
+import { UserContext } from "../../../context/contextValue";
+import CommentReplyInput from "../../../components/Inputs/CommentReplyInput";
 
 const CommentInfoCard = ({
   commentId,
@@ -17,9 +17,9 @@ const CommentInfoCard = ({
   replies,
   getAllComments,
   onDelete,
-  isSubReply
+  isSubReply,
 }) => {
-    const { user, setOpenAuthForm } = useContext(UserContext);
+  const { user, setOpenAuthForm } = useContext(UserContext);
 
   const [replyText, setReplyText] = useState("");
 
@@ -35,24 +35,22 @@ const CommentInfoCard = ({
   // Add Reply
   const handleAddReply = async () => {
     try {
-      const response = await axiosInstance.post(
-        API_PATHS.COMMENTS.ADD(post._id),
-        {
-          content: replyText,
-          parentComment: commentId,
-        }
-      );
+      await axiosInstance.post(API_PATHS.COMMENTS.ADD(post._id), {
+        content: replyText,
+        parentComment: commentId,
+      });
 
-      toast.success("Reply added successfully!");
+      toast.success("Đã thêm câu trả lời thành công!");
 
       setReplyText("");
       setShowReplyForm(false);
       getAllComments();
     } catch (error) {
-      console.error("Error adding reply:", error);
+      console.error("Lỗi khi thêm câu trả lời:", error);
     }
   };
-  return  <div className="bg-white p-3 rounded-lg cursor-pointer group mb-5">
+  return (
+    <div className="bg-white p-3 rounded-lg cursor-pointer group mb-5">
       <div className="grid grid-cols-12 gap-3">
         <div className="col-span-12 md:col-span-8 order-2 md:order-1">
           <div className="flex items-start gap-3">
@@ -65,7 +63,7 @@ const CommentInfoCard = ({
             <div className="flex-1">
               <div className="flex items-center gap-1">
                 <h3 className="text-[12px] text-gray-500 font-medium">
-                  @{authorName} 
+                  @{authorName}
                 </h3>
                 <LuDot className="text-gray-500" />
                 <span className="text-[12px] text-gray-500 font-medium">
@@ -81,16 +79,15 @@ const CommentInfoCard = ({
                     <button
                       className="flex items-center gap-2 text-[13px] font-medium text-sky-600 bg-sky-50 px-4 py-0.5 rounded-full hover:bg-sky-500 hover:text-white cursor-pointer"
                       onClick={() => {
-                        
                         if (!user) {
                           console.log("USER", user);
                           setOpenAuthForm(true);
-                          return; 
+                          return;
                         }
                         setShowReplyForm((prevState) => !prevState);
                       }}
                     >
-                      <LuReply /> Reply
+                      <LuReply /> Hồi đáp
                     </button>
                     <button
                       className="flex items-center gap-1.5 text-[13px] font-medium text-sky-600 bg-sky-50 px-4 py-0.5 rounded-full hover:bg-sky-500 hover:text-white cursor-pointer"
@@ -111,8 +108,6 @@ const CommentInfoCard = ({
           </div>
         </div>
       </div>
-
-     
 
       {!isSubReply && showReplyForm && (
         <CommentReplyInput
@@ -148,6 +143,7 @@ const CommentInfoCard = ({
           </div>
         ))}
     </div>
+  );
 };
 
 export default CommentInfoCard;

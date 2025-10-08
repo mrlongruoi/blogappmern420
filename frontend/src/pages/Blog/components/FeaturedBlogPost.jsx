@@ -1,16 +1,15 @@
-import React from "react";
-
 const FeaturedBlogPost = ({
   title,
   coverImageUrl,
   description,
-  tags=[],
+  tags = [],
   updatedOn,
   authorName,
   authProfileImg,
   onClick,
 }) => {
-  return <div
+  return (
+    <div
       className="grid grid-cols-12 bg-white shadow-lg shadow-gray-100 rounded-xl overflow-hidden cursor-pointer"
       onClick={onClick}
     >
@@ -32,7 +31,7 @@ const FeaturedBlogPost = ({
           </p>
 
           <div className="flex items-center flex-wrap gap-2 mb-4">
-            {tags.slice(0,3).map((tag, index) => (
+            {tags.slice(0, 3).map((tag, index) => (
               <span
                 key={index}
                 className="bg-sky-200/50 text-sky-800/80 text-xs font-medium px-3 py-0.5 rounded-full text-nowrap"
@@ -57,6 +56,7 @@ const FeaturedBlogPost = ({
         </div>
       </div>
     </div>
+  );
 };
 
 export default FeaturedBlogPost;

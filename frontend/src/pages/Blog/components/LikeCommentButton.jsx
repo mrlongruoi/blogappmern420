@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import { LuMessageCircleDashed } from "react-icons/lu";
+import { useState } from "react";
 import { PiHandsClapping } from "react-icons/pi";
-import axiosInstance from "../../../utils/axiosInstance";
-import { API_PATHS } from "../../../utils/apiPaths";
+import { LuMessageCircleDashed } from "react-icons/lu";
 import clsx from "clsx";
+import { API_PATHS } from "../../../utils/apiPaths";
+import axiosInstance from "../../../utils/axiosInstance";
 
 const LikeCommentButton = ({ postId, likes, comments }) => {
-    const [postLikes, setPostLikes] = useState(likes || 0);
+  const [postLikes, setPostLikes] = useState(likes || 0);
   const [liked, setLiked] = useState(false);
 
   const handleLikeClick = async () => {
@@ -25,10 +25,11 @@ const LikeCommentButton = ({ postId, likes, comments }) => {
         }, 500);
       }
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Lỗi:", error);
     }
   };
-  return <div className="flex justify-center items-center h-screen">
+  return (
+    <div className="flex justify-center items-center h-screen">
       <div className="fixed bottom-8 right-8 px-6 py-3 bg-black text-white rounded-full shadow-lg flex items-center justify-center">
         <button
           className="flex items-end gap-2 cursor-pointer"
@@ -51,6 +52,7 @@ const LikeCommentButton = ({ postId, likes, comments }) => {
         </button>
       </div>
     </div>
+  );
 };
 
 export default LikeCommentButton;

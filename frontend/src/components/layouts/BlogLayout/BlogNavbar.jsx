@@ -1,16 +1,15 @@
+import { Link } from "react-router-dom";
 import React, { useContext, useState } from "react";
 import { HiOutlineMenu, HiOutlineX } from "react-icons/hi";
-import { Link } from "react-router-dom";
 import { LuSearch } from "react-icons/lu";
-import { BLOG_NAVBAR_DATA } from "../../../utils/data";
-
-import Logo from "../../../assets/logo.svg";
+import Modal from "../../Modal";
 import SideMenu from "../SideMenu";
-import { UserContext } from "../../../context/userContext";
-import ProfileInfoCard from "../../Cards/ProfileInfoCard";
 import Login from "../../Auth/Login";
 import SignUp from "../../Auth/SignUp";
-import Modal from "../../Modal";
+import Logo from "../../../assets/logo.svg";
+import { BLOG_NAVBAR_DATA } from "../../../utils/data";
+import ProfileInfoCard from "../../Cards/ProfileInfoCard";
+import { UserContext } from "../../../context/contextValue";
 import SearchBarPopup from "../../../pages/Blog/components/SearchBarPopup";
 
 const BlogNavbar = ({ activeMenu }) => {
@@ -73,7 +72,7 @@ const BlogNavbar = ({ activeMenu }) => {
                 className="flex items-center justify-center gap-3 bg-linear-to-r from-sky-500 to-cyan-400 text-xs md:text-sm font-semibold text-white px-5 md:px-7 py-2 rounded-full hover:bg-black hover:text-white transition-colors cursor-pointer hover:shadow-2xl hover:shadow-cyan-200"
                 onClick={() => setOpenAuthForm(true)}
               >
-                Login/SignUp
+                Đăng nhập/Đăng ký
               </button>
             ) : (
               <div className="hidden md:block">

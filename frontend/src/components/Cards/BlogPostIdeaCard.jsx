@@ -1,7 +1,6 @@
-import React from "react";
-
 const BlogPostIdeaCard = ({ title, description, tags, tone, onSelect }) => {
-  return <div
+  return (
+    <div
       className="border-b border-gray-100 hover:bg-gray-100/60 px-6 py-5 cursor-pointer"
       onClick={onSelect}
     >
@@ -24,6 +23,7 @@ const BlogPostIdeaCard = ({ title, description, tags, tone, onSelect }) => {
         ))}
       </div>
     </div>
+  );
 };
 
 export default BlogPostIdeaCard;

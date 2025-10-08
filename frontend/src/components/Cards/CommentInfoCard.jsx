@@ -1,10 +1,10 @@
-import React, { useContext, useState } from "react";
-import { LuChevronDown, LuDot, LuReply, LuTrash2 } from "react-icons/lu";
-import { UserContext } from "../../context/userContext";
-import toast from "react-hot-toast";
-import axiosInstance from "../../utils/axiosInstance";
-import { API_PATHS } from "../../utils/apiPaths";
 import moment from "moment";
+import toast from "react-hot-toast";
+import { useContext, useState } from "react";
+import { LuChevronDown, LuDot, LuReply, LuTrash2 } from "react-icons/lu";
+import { API_PATHS } from "../../utils/apiPaths";
+import axiosInstance from "../../utils/axiosInstance";
+import { UserContext } from "../../context/contextValue";
 import CommentReplyInput from "../Inputs/CommentReplyInput";
 
 const CommentInfoCard = ({
@@ -37,21 +37,18 @@ const CommentInfoCard = ({
     try {
       console.log("post", post);
 
-      const response = await axiosInstance.post(
-        API_PATHS.COMMENTS.ADD(post._id),
-        {
-          content: replyText,
-          parentComment: commentId,
-        }
-      );
+      await axiosInstance.post(API_PATHS.COMMENTS.ADD(post._id), {
+        content: replyText,
+        parentComment: commentId,
+      });
 
-      toast.success("Reply added successfully!");
+      toast.success("Trả lời được thêm thành công!");
 
       setReplyText("");
       setShowReplyForm(false);
       getAllComments();
     } catch (error) {
-      console.error("Error adding reply:", error);
+      console.error("Lỗi khi thêm trả lời:", error);
     }
   };
 
@@ -92,7 +89,7 @@ const CommentInfoCard = ({
                         setShowReplyForm((prevState) => !prevState)
                       }
                     >
-                      <LuReply /> Reply
+                      <LuReply /> Trả lời
                     </button>
                     <button
                       className="flex items-center gap-1.5 text-[13px] font-medium text-sky-950 bg-sky-50 px-4 py-0.5 rounded-full hover:bg-sky-500 hover:text-white cursor-pointer"
@@ -113,7 +110,7 @@ const CommentInfoCard = ({
                   className="flex items-center gap-1.5 text-[13px] font-medium text-sky-950 bg-sky-50 px-4 py-0.5 rounded-full hover:bg-rose-500 hover:text-white cursor-pointer"
                   onClick={() => onDelete()}
                 >
-                  <LuTrash2 /> Delete
+                  <LuTrash2 /> Xóa bỏ
                 </button>
               </div>
             </div>

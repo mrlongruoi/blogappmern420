@@ -1,16 +1,15 @@
-import React, { useEffect, useState } from 'react'
-import DashboardLayout from '../../components/layouts/DashboardLayout'
-import { useNavigate } from 'react-router-dom';
-import CommentInfoCard from '../../components/Cards/CommentInfoCard';
-import axiosInstance from '../../utils/axiosInstance';
-import { API_PATHS } from '../../utils/apiPaths';
-import moment from 'moment';
-import toast from 'react-hot-toast';
-import DeleteAlertContent from '../../components/DeleteAlertContent';
-import Modal from '../../components/Modal';
+import { useNavigate } from "react-router-dom";
+import moment from "moment";
+import toast from "react-hot-toast";
+import { useEffect, useState } from "react";
+import Modal from "../../components/Modal";
+import { API_PATHS } from "../../utils/apiPaths";
+import axiosInstance from "../../utils/axiosInstance";
+import CommentInfoCard from "../../components/Cards/CommentInfoCard";
+import DeleteAlertContent from "../../components/DeleteAlertContent";
+import DashboardLayout from "../../components/layouts/DashboardLayout";
 
 const Comments = () => {
-  const navigate = useNavigate();
   const [comments, setComments] = useState([]);
 
   const [openDeleteAlert, setOpenDeleteAlert] = useState({
@@ -18,13 +17,15 @@ const Comments = () => {
     data: null,
   });
 
+  const _navigate = useNavigate();
+
   // get all commets
   const getAllComments = async () => {
     try {
       const response = await axiosInstance.get(API_PATHS.COMMENTS.GET_ALL);
       setComments(response.data?.length > 0 ? response.data : []);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error("Lỗi khi lấy dữ liệu:", error);
     }
   };
 
@@ -33,14 +34,14 @@ const Comments = () => {
     try {
       await axiosInstance.delete(API_PATHS.COMMENTS.DELETE(commentId));
 
-      toast.success("Comment Deleted Successfully");
+      toast.success("Bình luận đã được xóa thành công");
       setOpenDeleteAlert({
         open: false,
         data: null,
       });
       getAllComments();
     } catch (error) {
-      console.error("Error deleting blog post:", error);
+      console.error("Lỗi khi xóa bài đăng trên blog:", error);
     }
   };
 
@@ -50,7 +51,7 @@ const Comments = () => {
   }, []);
 
   return (
-    <DashboardLayout activeMenu='Comments'>
+    <DashboardLayout activeMenu="Comments">
       <div className="w-auto sm:max-w-[900px] mx-auto">
         <h2 className="text-2xl font-semibold mt-5 mb-5">Comments</h2>
 
@@ -81,17 +82,17 @@ const Comments = () => {
         onClose={() => {
           setOpenDeleteAlert({ open: false, data: null });
         }}
-        title="Delete Alert"
+        title="Xóa cảnh báo"
       >
         <div className="w-[30vw]">
           <DeleteAlertContent
-            content="Are you sure you want to delete this comment?"
+            content="Bạn có chắc chắn muốn xóa bình luận này không?"
             onDelete={() => deleteComment(openDeleteAlert.data)}
           />
         </div>
       </Modal>
     </DashboardLayout>
-  )
-}
+  );
+};
 
-export default Comments
+export default Comments;

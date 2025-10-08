@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { LuTrash, LuFileImage } from "react-icons/lu";
 
 const CoverImageSelector = ({ image, setImage, preview, setPreview }) => {
-    const inputRef = useRef(null);
+  const inputRef = useRef(null);
   const [previewUrl, setPreviewUrl] = useState(null);
 
   const handleImageChange = (event) => {
@@ -28,7 +28,8 @@ const CoverImageSelector = ({ image, setImage, preview, setPreview }) => {
   const onChooseFile = () => {
     inputRef.current.click();
   };
-  return <div className="mb-6">
+  return (
+    <div className="mb-6">
       <input
         type="file"
         accept="image/*"
@@ -45,7 +46,7 @@ const CoverImageSelector = ({ image, setImage, preview, setPreview }) => {
           <div className="w-14 h-14 flex items-center justify-center bg-sky-50 rounded-full">
             <LuFileImage className="text-xl text-sky-600" />
           </div>
-          <p className="text-sm text-gray-700">Click to upload a cover image</p>
+          <p className="text-sm text-gray-700">Bấm vào để tải ảnh bìa lên</p>
         </div>
       ) : (
         <div className="relative w-full h-56">
@@ -64,6 +65,7 @@ const CoverImageSelector = ({ image, setImage, preview, setPreview }) => {
         </div>
       )}
     </div>
+  );
 };
 
 export default CoverImageSelector;

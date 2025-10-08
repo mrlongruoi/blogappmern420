@@ -1,4 +1,5 @@
 const { GoogleGenAI } = require("@google/genai");
+
 const {
   blogPostIdeasPrompt,
   generateReplyPrompt,
@@ -15,10 +16,10 @@ const generateBlogPost = async (req, res) => {
     const { title, tone } = req.body;
 
     if (!title || !tone) {
-      return res.status(400).json({ message: "Missing required fields" });
+      return res.status(400).json({ message: "Thiếu các trường bắt buộc" });
     }
 
-    const prompt = `Write a markdown-formatted blog post titled "${title}". Use a ${tone} tone. Include an introduction, subheadings, code examples if relevant, and a conclusion.`;
+    const prompt = `Viết một bài blog hoàn chỉnh bằng tiếng Việt, định dạng markdown với tiêu đề "${title}". Sử dụng giọng văn '${tone}'. Bài viết cần có phần giới thiệu hấp dẫn, các tiêu đề phụ rõ ràng, ví dụ code nếu có liên quan, và một phần kết luận súc tích.`;
 
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash-lite",
@@ -29,7 +30,7 @@ const generateBlogPost = async (req, res) => {
     res.status(200).json(rawText);
   } catch (error) {
     res.status(500).json({
-      message: "Failed to generate blog post",
+      message: "Lỗi khi tạo bài đăng",
       error: error.message,
     });
   }
@@ -42,8 +43,11 @@ const generateBlogPostIdeas = async (req, res) => {
   try {
     const { topics } = req.body;
 
+    // Debug: log incoming topics to help diagnose client-side issues
+    console.log("[aiController] generateBlogPostIdeas received topics:", topics);
+
     if (!topics) {
-      return res.status(400).json({ message: "Missing required fields" });
+      return res.status(400).json({ message: "Thiếu các trường bắt buộc" });
     }
 
     const prompt = blogPostIdeasPrompt(topics);
@@ -67,7 +71,7 @@ const generateBlogPostIdeas = async (req, res) => {
     res.status(200).json(data);
   } catch (error) {
     res.status(500).json({
-      message: "Failed to generate blog post ideas",
+      message: "Không tạo ra ý tưởng bài đăng trên blog",
       error: error.message,
     });
   }
@@ -81,7 +85,7 @@ const generateCommentReply = async (req, res) => {
     const { author, content } = req.body;
 
     if (!content) {
-      return res.status(400).json({ message: "Missing required fields" });
+      return res.status(400).json({ message: "Thiếu các trường bắt buộc" });
     }
 
     const prompt = generateReplyPrompt({ author, content });
@@ -95,7 +99,7 @@ const generateCommentReply = async (req, res) => {
     res.status(200).json(rawText);
   } catch (error) {
     res.status(500).json({
-      message: "Failed to generate comment reply",
+      message: "Không tạo ra phản hồi cho bình luận",
       error: error.message,
     });
   }
@@ -109,7 +113,7 @@ const generatePostSummary = async (req, res) => {
     const { content } = req.body;
 
     if (!content) {
-      return res.status(400).json({ message: "Missing required fields" });
+      return res.status(400).json({ message: "Thiếu các trường bắt buộc" });
     }
 
     const prompt = blogSummaryPrompt(content);
@@ -132,7 +136,7 @@ const generatePostSummary = async (req, res) => {
     res.status(200).json(data);
   } catch (error) {
     res.status(500).json({
-      message: "Failed to generate blog post summary",
+      message: "Không tạo ra tóm tắt bài đăng",
       error: error.message,
     });
   }
@@ -142,5 +146,5 @@ module.exports = {
   generateBlogPost,
   generateBlogPostIdeas,
   generateCommentReply,
-  generatePostSummary
+  generatePostSummary,
 };

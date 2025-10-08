@@ -1,22 +1,23 @@
-import { useState } from "react";
-import Modal from "../../../components/Modal";
-import { LuSearch } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { LuSearch } from "react-icons/lu";
+import Modal from "../../../components/Modal";
 
 const SearchBarPopup = ({ isOpen, setIsOpen }) => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   const [query, setQuery] = useState("");
 
   const handleSearch = async () => {
     if (!query) return;
-    setQuery('')
-    setIsOpen(false)
+    setQuery("");
+    setIsOpen(false);
     navigate(`/search?query=${query}`);
   };
-  return <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} hideHeader>
+  return (
+    <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} hideHeader>
       <div className="p-4 w-[80vw] md:w-[40vw] mx-auto">
         {/* Header */}
-        <h2 className="text-lg font-semibold text-center">Search</h2>
+        <h2 className="text-lg font-semibold text-center">Tìm kiếm</h2>
 
         {/* Search Bar */}
         <div className="relative mt-4 mb-1">
@@ -37,6 +38,7 @@ const SearchBarPopup = ({ isOpen, setIsOpen }) => {
         </div>
       </div>
     </Modal>
+  );
 };
 
 export default SearchBarPopup;

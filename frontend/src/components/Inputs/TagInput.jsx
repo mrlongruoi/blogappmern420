@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 const TagInput = ({ tags, setTags }) => {
   const [input, setInput] = useState("");
@@ -21,7 +21,8 @@ const TagInput = ({ tags, setTags }) => {
     const newTags = tags.filter((_, i) => i !== index);
     setTags(newTags);
   };
-  return  <div className="flex flex-wrap gap-2 items-center border border-gray-300 rounded-md p-2 min-h-[48px] mt-3">
+  return (
+    <div className="flex flex-wrap gap-2 items-center border border-gray-300 rounded-md p-2 min-h-[48px] mt-3">
       {tags.map((tag, index) => (
         <div
           key={index}
@@ -42,10 +43,11 @@ const TagInput = ({ tags, setTags }) => {
         value={input}
         onChange={(e) => setInput(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder="Type and press enter"
+        placeholder="Nhập và nhấn enter"
         className="flex-1 min-w-[120px] border-none outline-none text-sm p-1"
       />
     </div>
+  );
 };
 
 export default TagInput;

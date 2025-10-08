@@ -1,16 +1,13 @@
-import React, { useEffect, useState } from "react";
-import BlogLayout from "../../components/layouts/BlogLayout/BlogLayout";
-import axiosInstance from "../../utils/axiosInstance";
-import { API_PATHS } from "../../utils/apiPaths";
-import moment from "moment";
 import { useNavigate } from "react-router-dom";
-import {
-  LuGalleryVerticalEnd,
-  LuLoaderCircle,
-} from "react-icons/lu";
+import moment from "moment";
+import { useEffect, useState } from "react";
+import { LuGalleryVerticalEnd, LuLoaderCircle } from "react-icons/lu";
+import { API_PATHS } from "../../utils/apiPaths";
+import axiosInstance from "../../utils/axiosInstance";
 import FeaturedBlogPost from "./components/FeaturedBlogPost";
 import BlogPostSummaryCard from "./components/BlogPostSummaryCard";
 import TrendingPostsSection from "./components/TrendingPostsSection";
+import BlogLayout from "../../components/layouts/BlogLayout/BlogLayout";
 
 const BlogLandingPage = () => {
   const navigate = useNavigate();
@@ -40,7 +37,7 @@ const BlogLandingPage = () => {
       setTotalPages(totalPages);
       setPage(pageNumber);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error("Lỗi tìm nạp dữ liệu:", error);
     } finally {
       setIsLoading(false);
     }
@@ -61,8 +58,9 @@ const BlogLandingPage = () => {
   const handleClick = (post) => {
     navigate(`/${post.slug}`);
   };
-  return <BlogLayout>
-    <div className="grid grid-cols-12 gap-5">
+  return (
+    <BlogLayout>
+      <div className="grid grid-cols-12 gap-5">
         <div className="col-span-12 md:col-span-9">
           {blogPostList.length > 0 && (
             <FeaturedBlogPost
@@ -116,7 +114,7 @@ const BlogLandingPage = () => {
                 ) : (
                   <LuGalleryVerticalEnd className="text-lg" />
                 )}{" "}
-                {isLoading ? "Loading..." : "Load More"}
+                {isLoading ? "Đang tải..." : "Tải thêm"}
               </button>
             </div>
           )}
@@ -126,7 +124,8 @@ const BlogLandingPage = () => {
           <TrendingPostsSection />
         </div>
       </div>
-  </BlogLayout>;
+    </BlogLayout>
+  );
 };
 
 export default BlogLandingPage;

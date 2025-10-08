@@ -1,4 +1,3 @@
-import React from "react";
 import CustomPieChart from "../Charts/CustomPieChart";
 
 const COLORS = [
@@ -56,6 +55,7 @@ const TagInsights = ({ tagUsage }) => {
 
     return finalData;
   })();
+  
   return (
     <div className="grid grid-cols-12 mt-4">
       <div className="col-span-12 md:col-span-7">

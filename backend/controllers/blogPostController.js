@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const cloudinary = require('cloudinary').v2;
+const cloudinary = require("cloudinary").v2;
 const BlogPost = require("../models/BlogPost");
 
 // @desc    Create a new blog post
@@ -31,7 +31,7 @@ const createPost = async (req, res) => {
   } catch (err) {
     res
       .status(500)
-      .json({ message: "Failed to create post", error: err.message });
+      .json({ message: "Không tạo được bài viết", error: err.message });
   }
 };
 
@@ -41,33 +41,51 @@ const createPost = async (req, res) => {
 const updatePost = async (req, res) => {
   try {
     const post = await BlogPost.findById(req.params.id);
-    if (!post) return res.status(404).json({ message: "Post not found" });
+    if (!post)
+      return res.status(404).json({ message: "Bài viết không tồn tại" });
 
-    if (post.author.toString() !== req.user._id.toString() && !req.user.isAdmin) {
-      return res.status(403).json({ message: "Not authorized to update this post" });
+    if (
+      post.author.toString() !== req.user._id.toString() &&
+      !req.user.isAdmin
+    ) {
+      return res
+        .status(403)
+        .json({ message: "Không có quyền cập nhật bài viết này" });
     }
 
     const updatedData = req.body;
 
     // === LOGIC XỬ LÝ ẢNH MỚI (AN TOÀN HƠN) ===
-    if (updatedData.coverImageUrl && post.coverImageUrl !== updatedData.coverImageUrl) {
-        // Chỉ xóa ảnh cũ nếu nó tồn tại VÀ là một URL Cloudinary hợp lệ
-        if (post.coverImageUrl && post.coverImageUrl.includes('/upload/')) {
-            const oldPublicId = post.coverImageUrl.split('/upload/')[1].split('.')[0];
-            await cloudinary.uploader.destroy(oldPublicId);
-        }
+    if (
+      updatedData.coverImageUrl &&
+      post.coverImageUrl !== updatedData.coverImageUrl
+    ) {
+      // Chỉ xóa ảnh cũ nếu nó tồn tại VÀ là một URL Cloudinary hợp lệ
+      if (post.coverImageUrl && post.coverImageUrl.includes("/upload/")) {
+        const oldPublicId = post.coverImageUrl
+          .split("/upload/")[1]
+          .split(".")[0];
+        await cloudinary.uploader.destroy(oldPublicId);
+      }
     }
     // === KẾT THÚC LOGIC XỬ LÝ ẢNH ===
 
     if (updatedData.title) {
-      updatedData.slug = updatedData.title.toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, "");
+      updatedData.slug = updatedData.title
+        .toLowerCase()
+        .replace(/ /g, "-")
+        .replace(/[^\w-]+/g, "");
     }
 
-    const updatedPost = await BlogPost.findByIdAndUpdate(req.params.id, updatedData, { new: true });
+    const updatedPost = await BlogPost.findByIdAndUpdate(
+      req.params.id,
+      updatedData,
+      { new: true }
+    );
     res.json(updatedPost);
   } catch (err) {
-    console.error("Update Post Error:", err);
-    res.status(500).json({ message: "Server Error", error: err.message });
+    console.error("Lỗi cập nhật bài viết:", err);
+    res.status(500).json({ message: "Lỗi máy chủ", error: err.message });
   }
 };
 
@@ -75,23 +93,24 @@ const updatePost = async (req, res) => {
 // @route   DELETE /api/posts/:id
 // @access  Private (Author or Admin)
 const deletePost = async (req, res) => {
- try {
+  try {
     const post = await BlogPost.findById(req.params.id);
-    if (!post) return res.status(404).json({ message: "Post not found" });
+    if (!post)
+      return res.status(404).json({ message: "Bài viết không tồn tại" });
 
     // === LOGIC XÓA ẢNH (AN TOÀN HƠN) ===
     // Chỉ thực hiện xóa nếu coverImageUrl tồn tại VÀ là một URL Cloudinary hợp lệ
-    if (post.coverImageUrl && post.coverImageUrl.includes('/upload/')) {
-        const publicId = post.coverImageUrl.split('/upload/')[1].split('.')[0];
-        await cloudinary.uploader.destroy(publicId);
+    if (post.coverImageUrl && post.coverImageUrl.includes("/upload/")) {
+      const publicId = post.coverImageUrl.split("/upload/")[1].split(".")[0];
+      await cloudinary.uploader.destroy(publicId);
     }
     // === KẾT THÚC LOGIC XÓA ẢNH ===
 
     await post.deleteOne();
-    res.json({ message: "Post deleted successfully" });
+    res.json({ message: "Đã xóa bài đăng thành công" });
   } catch (err) {
-    console.error("Delete Post Error:", err);
-    res.status(500).json({ message: "Server Error", error: err.message });
+    console.error("Lỗi xóa bài viết:", err);
+    res.status(500).json({ message: "Lỗi máy chủ", error: err.message });
   }
 };
 
@@ -118,12 +137,13 @@ const getAllPosts = async (req, res) => {
       .limit(limit);
 
     // Count totals for pagination and tab counts
-    const [totalCount, allCount, publishedCount, draftCount] = await Promise.all([
-      BlogPost.countDocuments(filter), // for pagination of current tab
-      BlogPost.countDocuments(),
-      BlogPost.countDocuments({ isDraft: false }),
-      BlogPost.countDocuments({ isDraft: true }),
-    ]);
+    const [totalCount, allCount, publishedCount, draftCount] =
+      await Promise.all([
+        BlogPost.countDocuments(filter), // for pagination of current tab
+        BlogPost.countDocuments(),
+        BlogPost.countDocuments({ isDraft: false }),
+        BlogPost.countDocuments({ isDraft: true }),
+      ]);
 
     res.json({
       posts,
@@ -137,9 +157,7 @@ const getAllPosts = async (req, res) => {
       },
     });
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Server Error", error: err.message });
+    res.status(500).json({ message: "Lỗi máy chủ", error: err.message });
   }
 };
 
@@ -152,12 +170,11 @@ const getPostBySlug = async (req, res) => {
       "author",
       "name profileImageUrl"
     );
-    if (!post) return res.status(404).json({ message: "Post not found" });
+    if (!post)
+      return res.status(404).json({ message: "Bài viết không tồn tại" });
     res.json(post);
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Server Error", error: err.message });
+    res.status(500).json({ message: "Lỗi máy chủ", error: err.message });
   }
 };
 
@@ -172,9 +189,7 @@ const getPostsByTag = async (req, res) => {
     }).populate("author", "name profileImageUrl");
     res.json(posts);
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Server Error", error: err.message });
+    res.status(500).json({ message: "Lỗi máy chủ", error: err.message });
   }
 };
 
@@ -193,9 +208,7 @@ const searchPosts = async (req, res) => {
     }).populate("author", "name profileImageUrl");
     res.json(posts);
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Server Error", error: err.message });
+    res.status(500).json({ message: "Lỗi máy chủ", error: err.message });
   }
 };
 
@@ -205,11 +218,9 @@ const searchPosts = async (req, res) => {
 const incrementView = async (req, res) => {
   try {
     await BlogPost.findByIdAndUpdate(req.params.id, { $inc: { views: 1 } });
-    res.json({ message: "View count incremented" });
+    res.json({ message: "Lượt xem đã được tăng" });
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Server Error", error: err.message });
+    res.status(500).json({ message: "Lỗi máy chủ", error: err.message });
   }
 };
 
@@ -219,11 +230,9 @@ const incrementView = async (req, res) => {
 const likePost = async (req, res) => {
   try {
     await BlogPost.findByIdAndUpdate(req.params.id, { $inc: { likes: 1 } });
-    res.json({ message: "Like added" });
+    res.json({ message: "Lượt thích đã được thêm" });
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Server Error", error: err.message });
+    res.status(500).json({ message: "Lỗi máy chủ", error: err.message });
   }
 };
 
@@ -239,9 +248,7 @@ const getTopPosts = async (req, res) => {
 
     res.json(posts);
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Server Error", error: err.message });
+    res.status(500).json({ message: "Lỗi máy chủ", error: err.message });
   }
 };
 
