@@ -25,15 +25,21 @@ const adminOnly = (req, res, next) => {
   }
 };
 
-router.post("/", protect, adminOnly, createPost);
-router.get("/", getAllPosts);
+router.get("/", getAllPosts);                 // Xử lý cho GET /api/posts
+router.get("/trending", getTopPosts);         // Xử lý cho GET /api/posts/trending
+router.get("/search", searchPosts);           // Xử lý cho GET /api/posts/search
+
+// CÁC ROUTE ĐỘNG (CÓ THAM SỐ) ĐẶT XUỐNG DƯỚI
 router.get("/slug/:slug", getPostBySlug);
+router.get("/tag/:tag", getPostsByTag);
+
+// ROUTE TẠO MỚI (POST)
+router.post("/", protect, adminOnly, createPost);
+
+// CÁC ROUTE CẬP NHẬT/XÓA/TƯƠNG TÁC VỚI ID CỤ THỂ
 router.put("/:id", protect, adminOnly, updatePost);
 router.delete("/:id", protect, adminOnly, deletePost);
-router.get("/tag/:tag", getPostsByTag);
-router.get("/search", searchPosts);
 router.post("/:id/view", incrementView);
 router.post("/:id/like", protect, likePost);
-router.get("/trending", getTopPosts);
 
 module.exports = router;
