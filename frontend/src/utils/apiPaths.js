@@ -1,6 +1,7 @@
-// export const BASE_URL = "https://blogappmern420.vercel.app";
-// export const BASE_URL = "http://localhost:8000";
-export const BASE_URL = '';
+// Use Vite environment variable VITE_API_BASE_URL to configure backend API URL in different environments.
+// In production set VITE_API_BASE_URL=https://your-backend-domain (for example, https://api.blogapp.world)
+// For local development you can leave it empty to use relative paths (""), or set to http://localhost:8000
+export const BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
 export const API_PATHS = {
   AUTH: {
     REGISTER: "/api/auth/register", // Signup
