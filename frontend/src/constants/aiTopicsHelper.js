@@ -2,17 +2,28 @@ import { AI_TOPICS } from "./aiTopics";
 
 // Lightweight categorization keywords. These are heuristics to group topics.
 const CATEGORY_KEYWORDS = {
-  cloud: ["aws", "azure", "google", "gcp", "cloud", "cloudfront", "ecr", "eks", "gke", "aks"],
-  frontend: ["react", "vue", "angular", "svelte", "html", "css", "webpack", "vite", "next", "nuxt"],
-  backend: ["node", "express", "django", "flask", "spring", "quarkus", "fastapi", "asp.net"],
-  mobile: ["android", "ios", "swift", "kotlin", "flutter", "react native", "xcode", "android studio"],
-  db: ["postgres", "mysql", "mongodb", "redis", "cassandra", "sql", "neo4j", "pinecone", "milvus"],
-  devops: ["docker", "kubernetes", "helm", "terraform", "ansible", "ci/cd", "github actions", "gitlab ci", "jenkins"],
-  ml: ["tensorflow", "pytorch", "hugging face", "mlflow", "kubeflow", "onnx", "transformers"],
-  security: ["security", "waf", "siem", "splunk", "snort", "nmap", "metasploit", "cobalt"],
-  gamedev: ["unity", "unreal", "godot", "cryengine", "gamemaker", "photon"],
-  networking: ["bgp", "ospf", "tcp", "udp", "dns", "nginx", "haproxy"],
-  other: ["git", "github", "gitlab", "devops"]
+  cameras_lenses: ["canon", "nikon", "sony", "fujifilm", "leica", "hasselblad", "dslr", "mirrorless", "ống kính", "lens", "prime", "zoom", "macro", "tele", "sigma", "tamron"],
+
+  // Thiết bị và kỹ thuật ánh sáng trong studio
+  lighting: ["flash", "strobe", "godox", "profoto", "softbox", "umbrella", "dù", "beauty dish", "reflector", "hắt sáng", "trigger", "high-key", "low-key", "rembrandt", "led"],
+
+  // Hậu kỳ, phần mềm và các kỹ thuật chỉnh sửa
+  post_production: ["photoshop", "lightroom", "capture one", "retouch", "chỉnh màu", "color grading", "preset", "actions", "dodge & burn", "frequency separation", "wacom", "hậu kỳ"],
+
+  // Các thể loại nhiếp ảnh phổ biến
+  genres: ["portrait", "chân dung", "fashion", "thời trang", "beauty", "sản phẩm", "product", "food", "ẩm thực", "lookbook", "headshot", "phong cảnh", "đường phố"],
+
+  // Các kỹ thuật và kiến thức nhiếp ảnh cốt lõi
+  techniques: ["iso", "aperture", "khẩu độ", "shutter speed", "tốc độ màn trập", "bố cục", "composition", "dof", "phơi sáng", "exposure", "white balance", "cân bằng trắng"],
+
+  // Kinh doanh, marketing và xây dựng sự nghiệp nhiếp ảnh
+  business: ["kinh doanh", "marketing", "portfolio", "seo", "hợp đồng", "báo giá", "pricing", "khách hàng", "thương hiệu cá nhân"],
+
+  // Các thương hiệu nổi bật trong ngành
+  brands: ["canon", "nikon", "sony", "fujifilm", "godox", "profoto", "adobe", "sigma", "tamron", "wacom", "capture one"],
+
+  // Các phụ kiện và chủ đề khác
+  other: ["studio", "tripod", "filter", "kính lọc", "backdrop", "phông nền", "sáng tạo", "creativity", "nhiếp ảnh"]
 };
 
 function normalize(s) {

@@ -1,22 +1,22 @@
 // utils/prompts.js
 
-// Danh sách các tone (giọng văn) tiếng Việt đã được dọn dẹp và tối ưu
+// Danh sách các tone (giọng văn) tiếng Việt đã được dọn dẹp và tối ưu cho chủ đề nhiếp ảnh
 const AI_TONES = [
-  // Nhóm 1: Chuyên nghiệp & Trang trọng
+  // Nhóm 1: Chuyên nghiệp & Hướng dẫn
   "Trang trọng", "Chuyên nghiệp", "Học thuật", "Phân tích", "Thuyết phục",
-  "Uy tín", "Khách quan", "Corporate", "Giáo dục", "Hướng dẫn",
+  "Uy tín", "Khách quan", "Giáo dục", "Hướng dẫn chi tiết", "Kỹ thuật",
 
-  // Nhóm 2: Thân thiện & Gần gũi
+  // Nhóm 2: Thân thiện & Nghệ thuật
   "Thân mật", "Thân thiện", "Đàm thoại", "Hài hước", "Nhiệt tình",
-  "Truyền cảm hứng", "Đồng cảm", "Kể chuyện", "Gần gũi",
+  "Truyền cảm hứng", "Đồng cảm", "Kể chuyện", "Nghệ thuật", "Sáng tạo",
 
-  // Nhóm 3: Trực tiếp & Thẳng thắn
+  // Nhóm 3: Trực tiếp & Tối giản
   "Trực tiếp", "Tự tin", "Thực tế", "Tối giản", "Ngắn gọn", "Thẳng thắn",
   "Chân thực", "Cẩn thận",
 
   // Nhóm 4: Sáng tạo & Độc đáo
-  "Sắc sảo", "Huyền bí", "Lạc quan", "Hoài nghi", "Sáng tạo", "Độc đáo",
-  "Đầy cảm hứng", "Tưởng tượng", "Khám phá", "Phiêu lưu", "Kỳ quái",
+  "Sắc sảo", "Huyền bí", "Lạc quan", "Hoài nghi", "Độc đáo",
+  "Đầy cảm hứng", "Tưởng tượng", "Khám phá", "Lãng mạn", "Cổ điển",
 ];
 
 // Loại bỏ các giá trị trùng lặp để đảm bảo danh sách là duy nhất
@@ -24,9 +24,9 @@ const uniqueTones = [...new Set(AI_TONES)];
 const AI_TONES_STRING = uniqueTones.join(", ");
 
 /**
- * Prompt để tạo ý tưởng bài viết blog SÁNG TẠO và CHUẨN SEO.
- * @param {string} topic - Chủ đề chính được người dùng chọn.
- * @param {string} allTopicsString - Chuỗi chứa TẤT CẢ các chủ đề công nghệ có thể có.
+ * Prompt để tạo ý tưởng bài viết blog SÁNG TẠO và CHUẨN SEO về nhiếp ảnh.
+ * @param {string} topic - Chủ đề chính được người dùng chọn (ví dụ: "Chụp ảnh chân dung").
+ * @param {string} allTopicsString - Chuỗi chứa TẤT CẢ các chủ đề nhiếp ảnh có thể có.
  * @param {string[]} existingTitles - Mảng các tiêu đề đã có để tránh trùng lặp.
  * @param {string} targetAudience - Đối tượng độc giả mục tiêu.
  * @returns {string} - Prompt hoàn chỉnh cho AI.
@@ -35,7 +35,7 @@ const blogPostIdeasPrompt = (
   topic,
   allTopicsString,
   existingTitles = [],
-  targetAudience = "lập trình viên, kỹ sư DevOps, và chuyên gia dữ liệu"
+  targetAudience = "nhiếp ảnh gia, người yêu nhiếp ảnh, và chủ studio"
 ) => {
   const existingTitlesString =
     existingTitles.length > 0
@@ -43,30 +43,30 @@ const blogPostIdeasPrompt = (
       : "";
 
   return `
-Bạn là một Chuyên gia Chiến lược Nội dung và cũng là một Lập trình viên Cao cấp dày dạn kinh nghiệm. Nhiệm vụ của bạn là tạo ra 5 ý tưởng bài viết blog CÓ GIÁ TRỊ CAO, CHUẨN SEO, và có khả năng kiếm tiền, dựa trên chủ đề chính là "${topic}".
+Bạn là một Nhiếp ảnh gia Chuyên nghiệp và một Chuyên gia Nội dung với nhiều năm kinh nghiệm trong ngành. Nhiệm vụ của bạn là tạo ra 5 ý tưởng bài viết blog CÓ GIÁ TRỊ CAO, CHUẨN SEO, và thu hút, dựa trên chủ đề chính là "${topic}".
 
-Để thực hiện nhiệm vụ, bạn có quyền truy cập vào một kho kiến thức khổng lồ về các công nghệ hiện có:
+Để thực hiện nhiệm vụ, bạn có quyền truy cập vào một kho kiến thức khổng lồ về các kỹ thuật, thiết bị và phong cách nhiếp ảnh:
 <KNOWLEDGE_BASE>
 ${allTopicsString}
 </KNOWLEDGE_BASE>
 
 YÊU CẦU CỐT LÕI:
-Những ý tưởng giá trị nhất thường **kết hợp các chủ đề từ nhiều lĩnh vực khác nhau**. Hãy tạo ra những sự kết hợp mới lạ và hữu ích.
-Ví dụ: kết nối một framework Frontend (React) với một dịch vụ BaaS (Supabase), một công cụ CI/CD (GitHub Actions), và một dịch vụ AI (Hugging Face Inference).
+Những ý tưởng giá trị nhất thường **kết hợp các chủ đề từ nhiều lĩnh vực nhiếp ảnh khác nhau**. Hãy tạo ra những sự kết hợp mới lạ và hữu ích.
+Ví dụ: kết hợp kỹ thuật "Chụp ảnh chân dung" với "Ánh sáng Studio (Strobe)", "Hậu kỳ bằng Lightroom" và "Marketing cho nhiếp ảnh gia".
 
 Đối tượng mục tiêu là ${targetAudience}.
 ${existingTitlesString}
 
 Hãy đa dạng hóa định dạng ý tưởng, bao gồm:
-- **Bài hướng dẫn thực hành (Tutorial):** "Cách xây dựng [Dự án cụ thể] bằng [Công nghệ A] và [Công nghệ B]".
-- **Bài so sánh chuyên sâu:** "[Công nghệ A] và [Công nghệ B]: Lựa chọn nào tốt hơn cho [Trường hợp sử dụng]?".
-- **Bài giải quyết vấn đề:** "Làm thế nào để tối ưu hóa [Vấn đề] khi sử dụng [Công nghệ A]".
-- **Nghiên cứu tình huống (Case Study):** "Chúng tôi đã tăng hiệu suất X% bằng cách tích hợp [Công nghệ A] vào [Công nghệ B]".
+- **Bài hướng dẫn thực hành (Tutorial):** "Hướng dẫn từng bước setup ánh sáng cho [Phong cách ảnh cụ thể] bằng [Thiết bị A] và [Thiết bị B]".
+- **Bài so sánh chuyên sâu:** "[Máy ảnh/Ống kính A] và [Máy ảnh/Ống kính B]: Lựa chọn nào tối ưu cho [Thể loại ảnh]?".
+- **Bài giải quyết vấn đề:** "Làm thế nào để khắc phục [Vấn đề thường gặp] khi chụp ảnh trong điều kiện [Môi trường cụ thể]".
+- **Nghiên cứu tình huống (Case Study):** "Phân tích một bức ảnh thành công: Từ ý tưởng, setup ánh sáng đến hậu kỳ".
 
 Với mỗi ý tưởng, hãy trả về:
 - title: Một tiêu đề cụ thể, hướng đến kết quả và chứa từ khóa chính.
 - description: Một bản tóm tắt 2 dòng giải thích rõ ràng vấn đề bài viết giải quyết và giá trị mang lại cho người đọc.
-- tags: Một mảng gồm ĐÚNG 3 thẻ. Thẻ đầu tiên PHẢI là "${topic}". Hai thẻ còn lại là các công nghệ chính khác được đề cập.
+- tags: Một mảng gồm ĐÚNG 3 thẻ. Thẻ đầu tiên PHẢI là "${topic}". Hai thẻ còn lại là các kỹ thuật hoặc thiết bị chính khác được đề cập.
 - tone: Chọn một giọng văn phù hợp từ danh sách sau: ${AI_TONES_STRING}.
 
 Chỉ trả về một mảng các đối tượng JSON hợp lệ. KHÔNG thêm bất kỳ văn bản hay định dạng markdown nào bên ngoài mảng JSON.
@@ -74,7 +74,7 @@ Chỉ trả về một mảng các đối tượng JSON hợp lệ. KHÔNG thêm
 };
 
 /**
- * Prompt để tạo toàn bộ nội dung bài viết blog chi tiết và chuẩn SEO.
+ * Prompt để tạo toàn bộ nội dung bài viết blog chi tiết và chuẩn SEO về nhiếp ảnh.
  * @param {string} title - Tiêu đề của bài viết.
  * @param {string} tone - Giọng văn mong muốn.
  * @param {string} targetAudience - Đối tượng độc giả mục tiêu.
@@ -83,12 +83,12 @@ Chỉ trả về một mảng các đối tượng JSON hợp lệ. KHÔNG thêm
 const generateFullPostPrompt = (
   title,
   tone,
-  targetAudience = "lập trình viên có kinh nghiệm trung bình"
+  targetAudience = "người yêu nhiếp ảnh và các nhiếp ảnh gia"
 ) => {
   return `
-Bạn là một blogger công nghệ chuyên nghiệp và là một lập trình viên cao cấp, có khả năng giải thích các chủ đề phức tạp một cách rõ ràng và hấp dẫn.
+Bạn là một blogger nhiếp ảnh chuyên nghiệp và một nhiếp ảnh gia giàu kinh nghiệm, có khả năng giải thích các chủ đề phức tạp một cách rõ ràng và hấp dẫn.
 
-Nhiệm vụ của bạn là viết một bài blog CHI TIẾT, CHUẨN SEO, và THỰC TẾ bằng tiếng Việt, định dạng markdown dựa trên các thông tin sau:
+Nhiệm vụ của bạn là viết một bài blog CHI TIẾT, CHUẨN SEO, và TRỰC QUAN SINH ĐỘNG bằng tiếng Việt, định dạng markdown dựa trên các thông tin sau:
 - **Tiêu đề:** "${title}"
 - **Giọng văn:** "${tone}"
 - **Đối tượng độc giả:** "${targetAudience}"
@@ -98,26 +98,26 @@ YÊU CẦU VỀ NỘI DUNG VÀ CẤU TRÚC:
     -   Từ khóa chính của bài viết được suy ra từ tiêu đề. Hãy lồng ghép từ khóa chính và các từ khóa phụ liên quan một cách tự nhiên trong các tiêu đề phụ (H2, H3) và trong nội dung.
     -   Nội dung phải giải quyết trực tiếp ý định tìm kiếm (search intent) của người dùng khi họ tìm kiếm tiêu đề này.
 2.  **Cấu trúc bài viết (BẮT BUỘC):**
-    -   **Mở bài hấp dẫn (Hook):** Bắt đầu bằng một đoạn giới thiệu ngắn (2-3 câu) nêu rõ vấn đề hoặc lợi ích mà bài viết sẽ giải quyết, và tóm tắt những gì người đọc sẽ học được.
-    -   **Điều kiện tiên quyết (Prerequisites):** (Nếu có) Liệt kê những kiến thức hoặc công cụ cần có trước khi bắt đầu.
+    -   **Mở bài hấp dẫn (Hook):** Bắt đầu bằng một đoạn giới thiệu ngắn (2-3 câu) nêu rõ vấn đề hoặc vẻ đẹp mà bài viết sẽ khám phá, và tóm tắt những gì người đọc sẽ học được.
+    -   **Thiết bị và chuẩn bị (Prerequisites):** (Nếu có) Liệt kê những thiết bị, phụ kiện hoặc kiến thức cần có trước khi bắt đầu.
     -   **Các phần chính (Thân bài):** Sử dụng các tiêu đề phụ (H2, H3) để chia nhỏ nội dung thành các bước logic, dễ theo dõi. Mỗi phần phải tập trung giải quyết một khía cạnh của chủ đề.
-    -   **Ví dụ Code rõ ràng:** Mọi đoạn code PHẢI được đặt trong khối markdown (ví dụ: \`\`\`javascript) và có giải thích chi tiết từng dòng hoặc khối lệnh quan trọng. Đừng chỉ dán code mà không giải thích.
-    -   **Kết luận và Các bước tiếp theo:** Tóm tắt lại những điểm quan trọng nhất của bài viết và gợi ý các bước tiếp theo hoặc các chủ đề nâng cao mà người đọc có thể tìm hiểu.
+    -   **Hình ảnh minh họa và Thông số kỹ thuật:** Mô tả rõ ràng các setup, bố cục. Khi đề cập đến một kỹ thuật, hãy gợi ý thông số máy ảnh tham khảo (ví dụ: khẩu độ, tốc độ màn trập, ISO) và giải thích tại sao.
+    -   **Kết luận và Gợi ý thực hành:** Tóm tắt lại những điểm quan trọng nhất của bài viết và gợi ý các bài tập thực hành hoặc các chủ đề nâng cao mà người đọc có thể tìm hiểu.
 
 Bài viết phải hoàn toàn bằng tiếng Việt và tuân thủ nghiêm ngặt định dạng markdown để đảm bảo tính dễ đọc và chuyên nghiệp.
 `;
 };
 
 /**
- * Prompt để tự động gợi ý thẻ (tags) từ nội dung bài viết.
+ * Prompt để tự động gợi ý thẻ (tags) từ nội dung bài viết nhiếp ảnh.
  * @param {string} title - Tiêu đề bài viết.
  * @param {string} content - Nội dung bài viết.
- * @param {string} allTopicsString - Chuỗi chứa TẤT CẢ các chủ đề có thể có.
+ * @param {string} allTopicsString - Chuỗi chứa TẤT CẢ các chủ đề nhiếp ảnh có thể có.
  * @returns {string} - Prompt hoàn chỉnh cho AI.
  */
 const suggestTagsPrompt = (title, content, allTopicsString) => {
   return `
-Bạn là một chuyên gia SEO và Biên tập viên Kỹ thuật. Nhiệm vụ của bạn là đọc tiêu đề và nội dung của một bài viết, sau đó chọn ra các thẻ (tags) phù hợp nhất từ một danh sách cho trước.
+Bạn là một chuyên gia SEO và Biên tập viên Ảnh. Nhiệm vụ của bạn là đọc tiêu đề và nội dung của một bài viết, sau đó chọn ra các thẻ (tags) phù hợp nhất từ một danh sách cho trước.
 
 DANH SÁCH CÁC THẺ HỢP LỆ:
 <TOPICS>
@@ -133,33 +133,33 @@ NỘI DUNG BÀI VIẾT (một phần để phân tích):
 HƯỚNG DẪN:
 1.  Đọc kỹ tiêu đề và nội dung để hiểu chủ đề chính.
 2.  Chọn ra từ 5 đến 7 thẻ phù hợp nhất từ danh sách <TOPICS> ở trên.
-3.  Ưu tiên chọn các thẻ là tên công nghệ cụ thể được đề cập trực tiếp trong bài.
-4.  Sau đó, chọn thêm các thẻ là các khái niệm hoặc lĩnh vực rộng hơn liên quan đến bài viết (ví dụ: 'Chatbot', 'Serverless', 'CI/CD').
+3.  Ưu tiên chọn các thẻ là tên kỹ thuật, thiết bị, hoặc phần mềm cụ thể được đề cập trực tiếp trong bài.
+4.  Sau đó, chọn thêm các thẻ là các khái niệm hoặc thể loại nhiếp ảnh rộng hơn liên quan đến bài viết (ví dụ: 'Chân dung', 'Ánh sáng tự nhiên', 'Hậu kỳ').
 
 Chỉ trả về một mảng JSON chứa các chuỗi (string) là tên các thẻ đã chọn. KHÔNG thêm bất kỳ văn bản nào khác.
 
 Ví dụ định dạng trả về:
-["OpenAI", "Airtable", "AWS Lambda", "Chatbot", "AI", "Serverless"]
+["Chụp ảnh chân dung", "Canon EOS R5", "Ống kính 85mm f/1.8", "Ánh sáng Studio", "Lightroom", "Chỉnh màu"]
 `;
 };
 
 /**
- * Prompt để tóm tắt nội dung bài viết theo chuẩn SEO chuyên sâu.
+ * Prompt để tóm tắt nội dung bài viết nhiếp ảnh theo chuẩn SEO chuyên sâu.
  * @param {string} blogContent - Nội dung của bài viết.
  * @returns {string} - Prompt hoàn chỉnh cho AI.
  */
 const blogSummaryPrompt = (blogContent) =>
   `
-Bạn là một chuyên gia SEO kỹ thuật và Biên tập viên Nội dung hàng đầu.
-Mục tiêu của bạn là phân tích nội dung bài viết dưới đây và tạo ra một đối tượng JSON chứa siêu dữ liệu (metadata) đã được tối ưu hóa hoàn hảo cho công cụ tìm kiếm và người dùng.
+Bạn là một chuyên gia SEO kỹ thuật và Biên tập viên Nội dung chuyên về lĩnh vực nhiếp ảnh.
+Mục tiêu của bạn là phân tích nội dung bài viết dưới đây và tạo ra một đối tượng JSON chứa siêu dữ liệu (metadata) đã được tối ưu hóa hoàn hảo cho công cụ tìm kiếm và người đọc.
 
 Hướng dẫn chi tiết:
-1.  **Phân tích nội dung:** Đọc kỹ nội dung bài viết để xác định chủ đề chính và các từ khóa quan trọng.
+1.  **Phân tích nội dung:** Đọc kỹ nội dung bài viết để xác định chủ đề chính, kỹ thuật, và các thiết bị được đề cập.
 2.  **Tạo đối tượng JSON** với các trường sau:
     -   **title:** Một tiêu đề SEO (tối đa 12 từ, dưới 70 ký tự). Phải chứa từ khóa chính và đặt nó ở gần đầu.
-    -   **metaDescription:** Một đoạn mô tả meta hấp dẫn (dưới 160 ký tự). Viết bằng giọng văn chủ động, tóm tắt giá trị bài viết và kết thúc bằng lời kêu gọi hành động để tăng tỷ lệ nhấp chuột (CTR).
-    -   **keywords:** Một mảng gồm 5-7 từ khóa. Bao gồm: 1 từ khóa chính, 2-3 từ khóa đuôi dài (long-tail), và 2-3 từ khóa liên quan ngữ nghĩa (LSI).
-    -   **summary:** Một bản tóm tắt khoảng 150-200 từ để hiển thị trên website. Ở cuối bản tóm tắt này, thêm một phần markdown có tiêu đề "## Bạn sẽ học được gì" và liệt kê 3–5 điểm chính dưới dạng gạch đầu dòng (\`- \`).
+    -   **metaDescription:** Một đoạn mô tả meta hấp dẫn (dưới 160 ký tự). Viết bằng giọng văn chủ động, tóm tắt giá trị bài viết và kết thúc bằng lời kêu gọi hành động (ví dụ: "Khám phá ngay!", "Học kỹ thuật mới!").
+    -   **keywords:** Một mảng gồm 5-7 từ khóa. Bao gồm: 1 từ khóa chính (ví dụ: "kỹ thuật chụp ảnh ngược sáng"), 2-3 từ khóa đuôi dài (ví dụ: "cách chụp ảnh chân dung ngược sáng đẹp"), và 2-3 từ khóa liên quan (ví dụ: "golden hour", "đèn flash Godox").
+    -   **summary:** Một bản tóm tắt khoảng 150-200 từ để hiển thị trên website. Ở cuối bản tóm tắt này, thêm một phần markdown có tiêu đề "## Bạn sẽ học được gì" và liệt kê 3–5 kỹ năng hoặc kiến thức chính dưới dạng gạch đầu dòng (\`- \`).
 
 Chỉ trả về một đối tượng JSON hợp lệ. Không bao gồm bất kỳ văn bản hay định dạng nào khác.
 
@@ -168,26 +168,26 @@ ${blogContent}
 `;
 
 /**
- * Prompt để tạo câu trả lời tương tác cho bình luận.
+ * Prompt để tạo câu trả lời tương tác cho bình luận trên blog nhiếp ảnh.
  * @param {object} comment - Đối tượng bình luận chứa author và content.
  * @returns {string} - Prompt hoàn chỉnh cho AI.
  */
 function generateReplyPrompt(comment) {
-  const authorName = comment.author?.name || "Người dùng";
+  const authorName = comment.author?.name || "Bạn đọc";
   const content = comment.content;
 
   return `
-Bạn là tác giả thân thiện và am hiểu của blog. Mục tiêu của bạn là trả lời một bình luận từ độc giả tên là ${authorName}.
+Bạn là tác giả thân thiện và am hiểu của một blog nhiếp ảnh. Mục tiêu của bạn là trả lời một bình luận từ độc giả tên là ${authorName}.
 
 Bình luận của độc giả là:
 "${content}"
 
 Hướng dẫn cho câu trả lời của bạn:
-- Duy trì giọng văn hữu ích và hấp dẫn.
-- Khiến người bình luận cảm thấy được lắng nghe bằng cách đề cập đến một điểm cụ thể mà họ đã nêu.
+- Duy trì giọng văn hữu ích, gần gũi và đầy cảm hứng.
+- Khiến người bình luận cảm thấy được lắng nghe bằng cách đề cập đến một điểm cụ thể mà họ đã nêu trong bình luận.
 - Giữ câu trả lời ngắn gọn (2-4 câu).
-- **Thêm giá trị:** Nếu có thể, hãy khéo léo giới thiệu một chủ đề liên quan hoặc một bài viết khác trên blog có thể hữu ích cho họ để khuyến khích họ khám phá thêm.
-- Kết thúc bằng cách khuyến khích thảo luận thêm.
+- **Thêm giá trị:** Nếu có thể, hãy khéo léo giới thiệu một kỹ thuật liên quan hoặc một bài viết khác trên blog có thể hữu ích cho họ để khuyến khích họ khám phá thêm.
+- Kết thúc bằng cách khuyến khích họ tiếp tục chụp ảnh và chia sẻ tác phẩm.
 
 Hãy viết một câu trả lời sâu sắc và phù hợp cho bình luận này.
   `;

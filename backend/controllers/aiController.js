@@ -19,7 +19,7 @@ const generateBlogPost = async (req, res) => {
       return res.status(400).json({ message: "Thiếu các trường bắt buộc" });
     }
 
-    const prompt = `Viết một bài blog hoàn chỉnh bằng tiếng Việt, định dạng markdown với tiêu đề "${title}". Sử dụng giọng văn '${tone}'. Bài viết cần có phần giới thiệu hấp dẫn, các tiêu đề phụ rõ ràng, ví dụ code nếu có liên quan, và một phần kết luận súc tích.`;
+    const prompt = `Viết một bài blog hoàn chỉnh bằng tiếng Việt, định dạng markdown với tiêu đề "${title}". Sử dụng giọng văn '${tone}'. Bài viết cần có phần giới thiệu hấp dẫn, các tiêu đề phụ rõ ràng, ví dụ nhiếp ảnh, studio ảnh nếu có liên quan, và một phần kết luận súc tích.`;
 
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash-lite",
